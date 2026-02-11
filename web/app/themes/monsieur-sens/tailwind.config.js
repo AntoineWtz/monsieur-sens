@@ -2,8 +2,7 @@
 const config = {
     content: [
         "./views/**/*.twig", 
-        "./static/**/*.js", 
-        "./node_modules/flowbite/**/*.js"
+        "./static/**/*.js"
         ],
     theme: {
         extend: {
@@ -22,9 +21,7 @@ const config = {
             },
         },
     },
-    plugins: [
-        import('flowbite/plugin.js')
-    ],
+    plugins: [],
 };
 
 export default config;
