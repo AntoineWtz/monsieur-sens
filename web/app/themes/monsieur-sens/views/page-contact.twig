@@ -1,0 +1,29 @@
+{% extends "base.twig" %}
+
+{% block content %}
+	<section class="container mx-auto py-16">
+		<div class="max-w-3xl mx-auto">
+			<h1 class="text-3xl font-bold">{{ post.title }}</h1>
+			<div class="mt-6">{{ post.content }}</div>
+
+			<form id="contact-form" method="post" action="" class="mt-8 space-y-4">
+				<label class="block">
+					<span class="text-sm">Nom</span>
+					<input name="contact_name" required class="w-full border rounded px-3 py-2"/>
+				</label>
+
+				<label class="block">
+					<span class="text-sm">Email</span>
+					<input type="email" name="contact_email" required class="w-full border rounded px-3 py-2"/>
+				</label>
+
+				<label class="block">
+					<span class="text-sm">Message</span>
+					<textarea name="contact_message" rows="6" required class="w-full border rounded px-3 py-2"></textarea>
+				</label>
+
+				<button type="submit" class="inline-block bg-black text-white py-2 px-4 rounded">Envoyer</button>
+			</form>
+		</div>
+	</section>
+{% endblock %}

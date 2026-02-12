@@ -1,0 +1,23 @@
+{% extends "base.twig" %}
+
+{% block content %}
+	<section class="container mx-auto py-16">
+		<div class="max-w-6xl mx-auto">
+			<h1 class="text-3xl font-bold">{{ post.title }}</h1>
+			<div class="mt-6">{{ post.content }}</div>
+
+			{% set gallery = post.get_field('gallery') %}
+			{% if gallery %}
+				<div class="mt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+					{% for image in gallery %}
+						<figure class="overflow-hidden rounded">
+							<img src="{{ image.url ?: image.src }}" alt="{{ image.alt }}" class="w-full h-auto object-cover"/>
+						</figure>
+					{% endfor %}
+				</div>
+			{% else %}
+				<p class="mt-8 text-sm text-gray-600">Aucune image trouvée dans la galerie.</p>
+			{% endif %}
+		</div>
+	</section>
+{% endblock %}
