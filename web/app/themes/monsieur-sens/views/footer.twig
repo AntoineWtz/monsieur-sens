@@ -1,1 +1,62 @@
-Copyright {{"now"|date('Y')}}
+<div class="text-ms-white container mx-auto max-w-7xl mt-12">
+	<div
+		class="grid grid-cols-1 md:grid-cols-10 gap-8">
+		{# left column: socials + email (1/10) #}
+		<div class="bg-black flex flex-col items-center justify-center h-full space-y-4 border-t-2 border-l-2 border-r-2 border-ms-gold p-4 rounded-tl-3xl rounded-tr-lg md:col-span-1">
+			{% if options.reseaux_sociaux %}
+				<ul class="flex flex-col space-y-4">
+					{% for item in options.reseaux_sociaux %}
+						{% set url = item.lien_reseau %}
+						<li>
+							<a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="text-2xl hover:text-ms-gold">
+								{% if 'facebook' in url %}
+									<i class="fab fa-facebook"></i>
+								{% elseif 'instagram' in url %}
+									<i class="fab fa-instagram"></i>
+								{% elseif 'linkedin' in url %}
+									<i class="fab fa-linkedin-in"></i>
+								{% else %}
+									<i class="fas fa-link"></i>
+								{% endif %}
+							</a>
+						</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+
+			{% if options.email %}
+				<p class="flex items-center space-x-2">
+
+					<a href="mailto:{{ options.email }}" class="text-2xl hover:text-ms-gold">
+						<i class="fas fa-envelope"></i>
+					</a>
+				</p>
+			{% endif %}
+		</div>
+
+		{# centre column: logo + copyright (3/10) #}
+		<div class="bg-black flex flex-col items-center justify-center h-full border-t-2 border-l-2 border-r-2 border-ms-gold p-4 rounded-tl-lg rounded-tr-lg md:col-span-3">
+			<a href="{{ site.url }}">
+				<img src="{{ site.theme.link }}/static/img/logo_mrsens_white.svg" alt="Monsieur Sens" class="h-20 w-auto">
+			</a>
+			<p class="mt-8 text-sm">©
+				{{ "now"|date('Y') }}
+				Monsieur Sens. Tous droits réservés.</p>
+		</div>
+
+		{# right column: footer menu links (6/10) #}
+		<div class="md:col-span-6 flex flex-col justify-center h-full">
+			{% if footer_menu %}
+				<nav aria-label="Menu footer">
+					<ul class="bg-black grid grid-cols-1 md:grid-cols-3 gap-4 border-t-2 border-l-2 border-r-2 border-ms-gold py-14 px-6 rounded-tl-lg rounded-tr-3xl">
+						{% for item in footer_menu.get_items %}
+							<li>
+								<a href="{{ item.link }}" class="text-base block hover:text-ms-gold">{{ item.title }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</nav>
+			{% endif %}
+		</div>
+	</div>
+</div>

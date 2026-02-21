@@ -1,39 +1,10 @@
 {% extends "base.twig" %}
 
 {% block content %}
-	<section class="container mx-auto py-16">
-		<div class="max-w-4xl mx-auto">
-			<h1 class="text-3xl font-bold">{{ post.title }}</h1>
-			<div class="mt-6">{{ post.content }}</div>
 
-			<section class="mt-10">
-				<h2 class="text-2xl font-semibold">Proposer une suggestion</h2>
-				<form id="suggestion-form" method="post" action="" class="mt-6 space-y-4">
-					<label class="block">
-						<span class="text-sm">Titre</span>
-						<input name="suggest_title" required class="w-full border rounded px-3 py-2"/>
-					</label>
-					<label class="block">
-						<span class="text-sm">Description</span>
-						<textarea name="suggest_body" rows="5" required class="w-full border rounded px-3 py-2"></textarea>
-					</label>
-					<button type="submit" class="inline-block bg-black text-white py-2 px-4 rounded">Soumettre</button>
-				</form>
-			</section>
+	<div class="container">
+		<h1>Suggestions de Monsieur Sens</h1>
+		<p>Découvrez nos suggestions et idées.</p>
+	</div>
 
-			{% if post.get_field('suggestions') %}
-				<section class="mt-12">
-					<h2 class="text-2xl font-semibold">Suggestions reçues</h2>
-					<ul class="mt-6 space-y-4">
-						{% for s in post.get_field('suggestions') %}
-							<li class="p-4 border rounded">
-								<strong>{{ s.title }}</strong>
-								<div class="mt-2 text-sm">{{ s.description }}</div>
-							</li>
-						{% endfor %}
-					</ul>
-				</section>
-			{% endif %}
-		</div>
-	</section>
 {% endblock %}

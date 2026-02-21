@@ -8,6 +8,7 @@ use Timber\Site;
 class StarterSite extends Site {
 	public function __construct() {
 		add_action( 'after_setup_theme', array( $this, 'theme_supports' ) );
+		add_action( 'after_setup_theme', array( $this, 'register_menus' ) );
 		add_action( 'init', array( $this, 'register_post_types' ) );
 		add_action( 'init', array( $this, 'register_taxonomies' ) );
 		add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
@@ -38,6 +39,14 @@ class StarterSite extends Site {
 
 	}
 
+	public function register_menus()
+	{
+		register_nav_menus([
+			'main'  => __('Menu Principal', 'monsieur-sens'),
+			'footer' => __('Menu Footer', 'monsieur-sens'),
+		]);
+	}
+
 	/**
 	 * This is where you add some context
 	 *
@@ -47,8 +56,24 @@ class StarterSite extends Site {
 		$context['foo']   = 'bar';
 		$context['stuff'] = 'I am a value set in your functions.php file';
 		$context['notes'] = 'These values are available everytime you call Timber::context();';
-		$context['menu']  = Timber::get_menu();
+		// menus by location
+		$context['header_menu'] = Timber::get_menu('main');
+		$context['footer_menu'] = Timber::get_menu('footer');
+		// site options fields (ACF options page)
+		$context['options'] = [
+			'telephone' => get_field('telephone','option'),
+			'email' => get_field('email','option'),
+			'localisation' => get_field('localisation','option'),
+			'reseaux_sociaux' => get_field('reseaux_sociaux','option'),
+		];
 		$context['site']  = $this;
+		// permalink for the contact page (slug = "contact")
+		$contact_page = get_page_by_path('contact');
+		if ( $contact_page ) {
+			$context['contact_url'] = get_permalink( $contact_page->ID );
+		} else {
+			$context['contact_url'] = site_url( '/contact' );
+		}
 
 		return $context;
 	}
