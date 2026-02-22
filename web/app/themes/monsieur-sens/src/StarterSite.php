@@ -5,18 +5,20 @@ use Timber\Site;
 /**
  * Class StarterSite
  */
-class StarterSite extends Site {
-	public function __construct() {
-		add_action( 'after_setup_theme', array( $this, 'theme_supports' ) );
-		add_action( 'after_setup_theme', array( $this, 'register_menus' ) );
-		add_action( 'init', array( $this, 'register_post_types' ) );
-		add_action( 'init', array( $this, 'register_taxonomies' ) );
+class StarterSite extends Site
+{
+	public function __construct()
+	{
+		add_action('after_setup_theme', array($this, 'theme_supports'));
+		add_action('after_setup_theme', array($this, 'register_menus'));
+		add_action('init', array($this, 'register_post_types'));
+		add_action('init', array($this, 'register_taxonomies'));
 		add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
 
 
-		add_filter( 'timber/context', array( $this, 'add_to_context' ) );
-		add_filter( 'timber/twig', array( $this, 'add_to_twig' ) );
-		add_filter( 'timber/twig/environment/options', [ $this, 'update_twig_environment_options' ] );
+		add_filter('timber/context', array($this, 'add_to_context'));
+		add_filter('timber/twig', array($this, 'add_to_twig'));
+		add_filter('timber/twig/environment/options', [$this, 'update_twig_environment_options']);
 
 		add_action('after_setup_theme', [$this, 'theme_locale_setup']);
 
@@ -28,16 +30,12 @@ class StarterSite extends Site {
 	/**
 	 * This is where you can register custom post types.
 	 */
-	public function register_post_types() {
-
-	}
+	public function register_post_types() {}
 
 	/**
 	 * This is where you can register custom taxonomies.
 	 */
-	public function register_taxonomies() {
-
-	}
+	public function register_taxonomies() {}
 
 	public function register_menus()
 	{
@@ -52,7 +50,8 @@ class StarterSite extends Site {
 	 *
 	 * @param string $context context['this'] Being the Twig's {{ this }}.
 	 */
-	public function add_to_context( $context ) {
+	public function add_to_context($context)
+	{
 		$context['foo']   = 'bar';
 		$context['stuff'] = 'I am a value set in your functions.php file';
 		$context['notes'] = 'These values are available everytime you call Timber::context();';
@@ -61,18 +60,18 @@ class StarterSite extends Site {
 		$context['footer_menu'] = Timber::get_menu('footer');
 		// site options fields (ACF options page)
 		$context['options'] = [
-			'telephone' => get_field('telephone','option'),
-			'email' => get_field('email','option'),
-			'localisation' => get_field('localisation','option'),
-			'reseaux_sociaux' => get_field('reseaux_sociaux','option'),
+			'telephone' => get_field('telephone', 'option'),
+			'email' => get_field('email', 'option'),
+			'localisation' => get_field('localisation', 'option'),
+			'reseaux_sociaux' => get_field('reseaux_sociaux', 'option'),
 		];
 		$context['site']  = $this;
 		// permalink for the contact page (slug = "contact")
 		$contact_page = get_page_by_path('contact');
-		if ( $contact_page ) {
-			$context['contact_url'] = get_permalink( $contact_page->ID );
+		if ($contact_page) {
+			$context['contact_url'] = get_permalink($contact_page->ID);
 		} else {
-			$context['contact_url'] = site_url( '/contact' );
+			$context['contact_url'] = site_url('/contact');
 		}
 
 		return $context;
@@ -80,21 +79,21 @@ class StarterSite extends Site {
 
 
 	public function theme_locale_setup()
-    {
-        $path =  get_template_directory() . '/languages';
-        $result = load_theme_textdomain('cwstarter', $path);
+	{
+		$path =  get_template_directory() . '/languages';
+		$result = load_theme_textdomain('cwstarter', $path);
 
-        if ($result)
-            return;
+		if ($result)
+			return;
 
-        $locale = apply_filters('theme_locale', get_locale(), 'cwstarter');
+		$locale = apply_filters('theme_locale', get_locale(), 'cwstarter');
+	}
 
-    }
 
-
-	public function theme_supports() {
+	public function theme_supports()
+	{
 		// Add default posts and comments RSS feed links to head.
-		add_theme_support( 'automatic-feed-links' );
+		add_theme_support('automatic-feed-links');
 
 		/*
 		 * Let WordPress manage the document title.
@@ -102,14 +101,14 @@ class StarterSite extends Site {
 		 * hard-coded <title> tag in the document head, and expect WordPress to
 		 * provide it for us.
 		 */
-		add_theme_support( 'title-tag' );
+		add_theme_support('title-tag');
 
 		/*
 		 * Enable support for Post Thumbnails on posts and pages.
 		 *
 		 * @link https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
 		 */
-		add_theme_support( 'post-thumbnails' );
+		add_theme_support('post-thumbnails');
 
 		/*
 		 * Switch default core markup for search form, comment form, and comments
@@ -143,7 +142,7 @@ class StarterSite extends Site {
 			)
 		);
 
-		add_theme_support( 'menus' );
+		add_theme_support('menus');
 	}
 
 	/**
@@ -151,7 +150,8 @@ class StarterSite extends Site {
 	 *
 	 * @param string $text being 'foo', then returned 'foo bar!'.
 	 */
-	public function myfoo( $text ) {
+	public function myfoo($text)
+	{
 		$text .= ' bar!';
 		return $text;
 	}
@@ -161,14 +161,15 @@ class StarterSite extends Site {
 	 *
 	 * @param Twig\Environment $twig get extension.
 	 */
-	public function add_to_twig( $twig ) {
+	public function add_to_twig($twig)
+	{
 		/**
 		 * Required when you want to use Twig’s template_from_string.
 		 * @link https://twig.symfony.com/doc/3.x/functions/template_from_string.html
 		 */
 		// $twig->addExtension( new Twig\Extension\StringLoaderExtension() );
 
-		$twig->addFilter( new Twig\TwigFilter( 'myfoo', [ $this, 'myfoo' ] ) );
+		$twig->addFilter(new Twig\TwigFilter('myfoo', [$this, 'myfoo']));
 
 		return $twig;
 	}
@@ -182,25 +183,28 @@ class StarterSite extends Site {
 	 *
 	 * @return array
 	 */
-	public function update_twig_environment_options( $options ) {
-	    // $options['autoescape'] = true;
+	public function update_twig_environment_options($options)
+	{
+		// $options['autoescape'] = true;
 
-	    return $options;
+		return $options;
 	}
 
 
-	public function enqueue_scripts() {
+	public function enqueue_scripts()
+	{
 
 		$base_url = get_home_url();
 		$base_path = substr(ABSPATH, 0, -3);
 
 		$context  = stream_context_create(
 			array(
-			  'http' => array(
-				'header' => 'User-Agent: Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0',
-			),
-		));
-  
+				'http' => array(
+					'header' => 'User-Agent: Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0',
+				),
+			)
+		);
+
 		$entrypoints = json_decode(file_get_contents(join("/", [get_template_directory_uri(), 'dist', 'entrypoints.json']), false, $context));
 
 		wp_enqueue_script(
@@ -216,7 +220,7 @@ class StarterSite extends Site {
 			'before',
 		);
 
-		if( in_array(WP_ENV, ['staging', 'production']) ) {
+		if (in_array(WP_ENV, ['staging', 'production'])) {
 
 			wp_enqueue_style(
 				'bud/css',
@@ -224,20 +228,16 @@ class StarterSite extends Site {
 				[],
 				$this->get_file_hash($base_path . $entrypoints->app->css[0])
 			);
-			
 		}
-
-    }
+	}
 
 
 	public static function get_file_hash($file)
-    {
-        $hash = @md5_file($file);
-        if ($hash) {
-            return $hash;
-        }
-        return null;
-    }
-
-
+	{
+		$hash = @md5_file($file);
+		if ($hash) {
+			return $hash;
+		}
+		return null;
+	}
 }

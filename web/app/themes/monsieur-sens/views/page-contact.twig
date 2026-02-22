@@ -2,9 +2,126 @@
 
 {% block content %}
 
-	<div class="container">
-		<h1>Contactez-nous</h1>
-		<p>Pour toute question ou demande d'information, n'hésitez pas à nous contacter.</p>
+	<div class="container mx-auto max-w-7xl py-6 md:py-12 px-4">
+		<div
+			class="grid grid-cols-1 md:grid-cols-6 items-center gap-12">
+			{# left column: coordonnées #}
+			<aside class="space-y-6 text-center flex flex-col items-center justify-center md:col-span-2">
+
+				{% if post.thumbnail %}
+					<div class="rounded-t-3xl rounded-b-lg overflow-hidden w-44 h-24 mx-auto border-2 border-ms-gold ">
+						<img src="{{ post.thumbnail.src }}" alt="{{ post.thumbnail.alt }}" class="w-full h-full object-cover">
+					</div>
+				{% endif %}
+
+				<h1 class="text-3xl font-display">{{ post.title }}</h1>
+				<p class="max-w-[15rem] text-center">{{ post.excerpt }}</p>
+
+				<div class="border-t-2 border-ms-gold w-12 my-4 rounded-full"></div>
+
+				{% if options.telephone %}
+					<p class="flex items-center justify-center">
+						<i class="fas fa-phone mr-4 text-ms-gold" aria-hidden="true"></i>
+						<a href="tel:{{ options.telephone }}" class="hover:underline">{{ options.telephone }}</a>
+					</p>
+				{% endif %}
+
+				{% if options.email %}
+					<p class="flex items-center justify-center">
+						<i class="fas fa-envelope mr-4 text-ms-gold" aria-hidden="true"></i>
+						<a href="mailto:{{ options.email }}" class="hover:underline">{{ options.email }}</a>
+					</p>
+				{% endif %}
+
+				{% if options.localisation %}
+					<p class="flex items-center justify-center">
+						<i class="fas fa-map-marker mr-4 text-ms-gold" aria-hidden="true"></i>
+						<span>{{ options.localisation }}</span>
+					</p>
+				{% endif %}
+
+				{% if options.reseaux_sociaux %}
+					<div class="flex space-x-6 mt-6">
+						{% for item in options.reseaux_sociaux %}
+							{% set url = item.lien_reseau %}
+							{% if 'facebook' in url %}
+								{% set icon_class = 'fab fa-facebook' %}
+							{% elseif 'instagram' in url %}
+								{% set icon_class = 'fab fa-instagram' %}
+							{% elseif 'linkedin' in url %}
+								{% set icon_class = 'fab fa-linkedin-in' %}
+							{% else %}
+								{% set icon_class = 'fas fa-link' %}
+							{% endif %}
+							<a href="{{ url }}" target="_blank" rel="noopener" class="text-3xl text-ms-white hover:text-ms-gold transition duration-400 hover:scale-90">
+								<span class="sr-only">{{ url }}</span>
+								<i class="{{ icon_class }}" aria-hidden="true"></i>
+							</a>
+						{% endfor %}
+					</div>
+				{% endif %}
+			</aside>
+
+			{# right column: formulaire #}
+			<section class="md:col-span-3 border-2 border-ms-light-black rounded-lg px-4 py-2">
+				{% if contact_form %}
+					{# wrapper pour cibler les éléments générés par WPForms #}
+					<div class="wpforms-styled page-contact-wpform">
+						{% if wpforms_available %}
+							{{ function('wpforms_display', contact_form.ID) }}
+						{% else %}
+							{{ function('do_shortcode', contact_form.post_content) | raw }}
+						{% endif %}
+					</div>
+
+					{# styles spécifiques aux labels / champs #}
+					<style>
+						.page-contact-wpform label {
+							color: #F5F5F5 !important; /* ms-white */
+						}
+						.page-contact-wpform input,
+						.page-contact-wpform textarea,
+						.page-contact-wpform select {
+							background-color: #000 !important; /* bg-black */
+							color: #F5F5F5 !important; /* text-ms-white */
+							border: 1px solid #262626 !important; /* ms-gold */
+							border-radius: 0.5rem !important; /* rounded */
+							padding: 0.5rem 0.75rem !important;
+							width: 100% !important;
+							box-sizing: border-box !important;
+						}
+						.page-contact-wpform button {
+							background-color: #f5cb5c !important; /* ms-gold */
+							color: #000 !important; /* text-black */
+							border: 2px solid transparent !important;
+							border-top-right-radius: 8px !important; /* rounded-lg */
+							border-bottom-left-radius: 8px !important; /* rounded-lg */
+							border-bottom-right-radius: 4px !important; /* no rounded */
+							border-top-left-radius: 4px !important; /* no rounded */
+							font-weight: 600 !important; /* font-semibold */
+							transition: all 0.4s ease !important;
+							display: inline-block !important;
+							margin: 1rem auto 0 !important;
+							padding: 0.75rem 1.25rem !important;
+							cursor: pointer !important;
+						}
+						.page-contact-wpform button:hover {
+							background-color: #000 !important; /* bg-black */
+							color: #F5F5F5 !important; /* text-ms-gold */
+							border-color: #f5cb5c !important; /* ms-gold */
+							transform: scale(0.95) !important;
+						}
+						.page-contact-wpform .wpforms-submit {
+							display: flex !important;
+							justify-content: center !important;
+							align-items: center !important;
+						}
+					</style>
+				{% else %}
+					<p>{{ __("Aucun formulaire de contact configuré pour cette page.", "monsieur-sens") }}</p>
+				{% endif %}
+			</section>
+		</div>
 	</div>
 
 {% endblock %}
