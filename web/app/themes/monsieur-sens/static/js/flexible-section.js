@@ -103,19 +103,19 @@ export function VideoModal() {
 // FAQ: only one <details> open per group and ensure first is open by default
 export function FaqGroups() {
   try {
-    document.querySelectorAll('[data-faq-group]').forEach(function (group) {
-      const opened = Array.from(group.querySelectorAll('details[open]'));
+    document.querySelectorAll("[data-faq-group]").forEach(function (group) {
+      const opened = Array.from(group.querySelectorAll("details[open]"));
       if (opened.length > 1) {
-        opened.slice(1).forEach(d => d.open = false);
+        opened.slice(1).forEach((d) => (d.open = false));
       } else if (opened.length === 0) {
-        const first = group.querySelector('details');
+        const first = group.querySelector("details");
         if (first) first.open = true;
       }
 
-      group.querySelectorAll('details').forEach(function (detail) {
-        detail.addEventListener('toggle', function () {
+      group.querySelectorAll("details").forEach(function (detail) {
+        detail.addEventListener("toggle", function () {
           if (detail.open) {
-            group.querySelectorAll('details').forEach(function (other) {
+            group.querySelectorAll("details").forEach(function (other) {
               if (other !== detail) other.open = false;
             });
           }
@@ -124,5 +124,128 @@ export function FaqGroups() {
     });
   } catch (e) {
     // fail silently if DOM structure not present
+  }
+}
+
+// Masonry grid: calculate row spans and handle expansion
+export function MasonryGrid() {
+  try {
+    const grids = document.querySelectorAll("[data-masonry] .ms-grid");
+    if (!grids.length) return;
+
+    const debounce = (fn, wait = 120) => {
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn(...args), wait);
+      };
+    };
+
+    function resizeGrid(grid) {
+      const style = window.getComputedStyle(grid);
+      const rowHeight = parseInt(style.getPropertyValue("grid-auto-rows")) || 8;
+      const gap =
+        parseInt(style.getPropertyValue("gap")) ||
+        parseInt(style.getPropertyValue("grid-row-gap")) ||
+        0;
+
+      grid.querySelectorAll(".masonry-item").forEach((item) => {
+        // measure content height
+        const content = item.querySelector(".masonry-content") || item;
+        const height = content.getBoundingClientRect().height;
+        const span = Math.ceil((height + gap) / (rowHeight + gap));
+        item.style.gridRowEnd = "span " + span;
+      });
+    }
+
+    function initGrid(grid) {
+      // recalc on each image load
+      const imgs = Array.from(grid.querySelectorAll("img"));
+      let loaded = 0;
+      if (!imgs.length) {
+        resizeGrid(grid);
+      }
+      imgs.forEach((img) => {
+        if (img.complete) {
+          loaded++;
+        } else {
+          img.addEventListener("load", () => {
+            resizeGrid(grid);
+          });
+        }
+      });
+      // initial calc
+      setTimeout(() => resizeGrid(grid), 50);
+
+      // click to expand / collapse — allow up to 2 expanded items (FIFO)
+      (function () {
+        let expandedOrder = [];
+
+        // initialize array from any pre-expanded items
+        grid.querySelectorAll(".masonry-item.is-expanded").forEach((it) => {
+          expandedOrder.push(it);
+        });
+
+        grid.addEventListener("click", (e) => {
+          const item = e.target.closest(".masonry-item");
+          if (!item) return;
+
+          const isNowExpanded = item.classList.contains("is-expanded");
+
+          if (isNowExpanded) {
+            // If already expanded, collapse it
+            // If nothing pre-expanded, pick two random items to expand by default
+            if (expandedOrder.length === 0) {
+              const items = Array.from(grid.querySelectorAll(".masonry-item"));
+              if (items.length >= 2) {
+                // pick two distinct random indices
+                const idx1 = Math.floor(Math.random() * items.length);
+                let idx2 = Math.floor(Math.random() * items.length);
+                while (idx2 === idx1) {
+                  idx2 = Math.floor(Math.random() * items.length);
+                }
+                const first = items[idx1];
+                const second = items[idx2];
+                first.classList.add("is-expanded");
+                second.classList.add("is-expanded");
+                expandedOrder.push(first, second);
+              } else if (items.length === 1) {
+                const only = items[0];
+                only.classList.add("is-expanded");
+                expandedOrder.push(only);
+              }
+            }
+            item.classList.remove("is-expanded");
+            expandedOrder = expandedOrder.filter((x) => x !== item);
+          } else {
+            // Expand item
+            item.classList.add("is-expanded");
+            expandedOrder.push(item);
+
+            // If more than two, collapse the oldest one
+            if (expandedOrder.length > 2) {
+              const first = expandedOrder.shift();
+              if (first && first !== item) {
+                first.classList.remove("is-expanded");
+              }
+            }
+          }
+
+          // Ensure layout recalculation after visual changes
+          requestAnimationFrame(() => resizeGrid(grid));
+          setTimeout(() => resizeGrid(grid), 220);
+        });
+      })();
+    }
+
+    const onResize = debounce(() => {
+      grids.forEach((g) => resizeGrid(g));
+    }, 160);
+
+    grids.forEach((g) => initGrid(g));
+    window.addEventListener("resize", onResize);
+  } catch (e) {
+    // fail silently
+    // console.error('MasonryGrid error', e);
   }
 }

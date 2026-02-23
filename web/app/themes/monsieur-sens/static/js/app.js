@@ -1,6 +1,7 @@
-import { VideoModal, FaqGroups } from "./flexible-section";
+import { VideoModal, FaqGroups, MasonryGrid } from "./flexible-section";
 
 document.addEventListener("DOMContentLoaded", () => {
   VideoModal();
   FaqGroups();
+  MasonryGrid();
 });
