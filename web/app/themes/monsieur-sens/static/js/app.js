@@ -1,3 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // Your JavaScript goes here
+import { VideoModal, FaqGroups } from "./flexible-section";
+
+document.addEventListener("DOMContentLoaded", () => {
+  VideoModal();
+  FaqGroups();
 });

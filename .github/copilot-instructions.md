@@ -414,11 +414,6 @@ This gives a flexible, component-based architecture that's easy to maintain and 
 ### Contact Page (`page-contact.twig`)
 - Contact form (ACF forms or custom)
 - Contact information (address, phone, email)
-- Map integration optional
-
-### Suggestions Page (`page-suggestions.twig`)
-- Feedback form
-- Example suggestion showcase
 
 ### Default Page (`page.twig`)
 - Featured image (optional)

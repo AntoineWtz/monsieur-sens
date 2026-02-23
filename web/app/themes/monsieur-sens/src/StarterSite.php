@@ -81,12 +81,12 @@ class StarterSite extends Site
 	public function theme_locale_setup()
 	{
 		$path =  get_template_directory() . '/languages';
-		$result = load_theme_textdomain('cwstarter', $path);
+		$result = load_theme_textdomain('monsieur-sens', $path);
 
 		if ($result)
 			return;
 
-		$locale = apply_filters('theme_locale', get_locale(), 'cwstarter');
+		$locale = apply_filters('theme_locale', get_locale(), 'monsieur-sens');
 	}
 
 

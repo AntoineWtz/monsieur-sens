@@ -1,14 +1,33 @@
 {% extends "base.twig" %}
 
 {% block content %}
-	<div class="content-wrapper">
-		<article class="post-type-{{post.post_type}}" id="post-{{post.ID}}">
-			<section class="article-content">
-				<h1 class="article-h1">{{post.title}}</h1>
-				<div class="article-body">
-					{{post.content}}
+	<div class="container max-w-7xl mx-auto px-4 py-8">
+
+		<div class="relative w-full -mx-4 mb-8">
+			{% if post.thumbnail %}
+				<div class="relative h-80 md:h-96 lg:h-[400px] overflow-hidden rounded-tl-3xl rounded-tr-lg rounded-bl-lg rounded-br-3xl">
+					<img class="w-full h-full object-cover" src="{{ post.thumbnail.src }}" alt="{{ post.title }}">
+					<div class="absolute inset-0 bg-gradient-to-b from-ms-black/60 to-ms-black/0"></div>
 				</div>
-			</section>
-		</article>
-	</div><!-- /content-wrapper -->
+			{% endif %}
+
+			<div class="relative z-10 container max-w-7xl mx-auto px-16 {% if post.thumbnail %}-mt-24{% else %}mt-8{% endif %}">
+				<div class="bg-black/95 p-8 md:p-12 rounded-tl-3xl rounded-tr-lg rounded-bl-lg rounded-br-3xl border-2 border-ms-gold">
+					<h1 class="text-4xl md:text-5xl lg:text-6xl font-display uppercase font-bold mb-6 text-ms-gold">
+						{{ post.title }}
+					</h1>
+
+					{% if post.content %}
+						<div class="prose max-w-none text-ms-white">
+							{{ post.content|raw }}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+		{# Sections flexibles #}
+		{% include 'acf-sections.twig' %}
+	</div>
+
 {% endblock %}

@@ -1,0 +1,306 @@
+{# === Contenu flexible ACF — Monsieur Sens (template par défaut) === #}
+{% set sections = post.meta('section')|default([]) %}
+
+{% for section in sections %}
+
+	{# 1) SECTION 1 COLONNE (texte / photo / vidéo / diaporama) #}
+	{% if section.acf_fc_layout == 'section_1_colonne' %}
+		<section class="py-4 lg:py-8">
+			<div
+				class="container mx-auto px-6">
+
+				{#  TEXTE  #}
+				{% if section.type_de_contenu == 'texte' and section.texte %}
+					<div class="prose max-w-none text-ms-white whitespace-pre-line">
+						{{ section.texte|raw }}
+					</div>
+
+					{#  PHOTO  #}
+				{% elseif section.type_de_contenu == 'photo' and section.photo %}
+					<figure class="overflow-hidden">
+						<img src="{{ section.photo.url }}" alt="{{ section.photo.alt|default('') }}" class="w-full h-[300px] md:h-[420px] object-cover rounded-tl-lg rounded-tr-3xl rounded-bl-3xl rounded-br-lg border-2 border-ms-gold" loading="lazy">
+					</figure>
+
+					{#  VIDEO (cover + bouton play) #}
+				{% elseif section.type_de_contenu == 'video' and section.video and section.video_cover %}
+					{% set cover = section.video_cover %}
+					<button type="button" class="cw-video-open group relative w-full overflow-hidden focus:outline-none" data-video-url="{{ section.video|trim }}">
+						<img src="{{ cover.url }}" alt="{{ cover.alt|default('Vidéo') }}" class="block w-full h-[220px] md:h-[540px] object-cover rounded-tl-3xl rounded-tr-lg rounded-bl-lg rounded-br-3xl" loading="lazy">
+						<span class="absolute inset-0 bg-ms-black/25 group-hover:bg-ms-black/35 transition"></span>
+						<span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-ms-white/95 text-ms-black shadow-lg rounded-full opacity-90 group-hover:opacity-100 transition" aria-label="Lire la vidéo">
+							<i class="fa-solid fa-play text-xl md:text-2xl translate-x-[2px]"></i>
+						</span>
+					</button>
+
+					{# --- DIAPORAMA (paysage + vignettes carrées cliquables) --- #}
+				{% elseif section.type_de_contenu == 'diaporama' and section.diaporama %}
+					{% set imgs = section.diaporama|default([]) %}
+					{% if imgs|length %}
+						{% set main    = imgs|first %}
+						{% set mainUrl = (main.sizes.large ?? main.sizes['2048x2048'] ?? main.url) %}
+						{% set mainAlt = main.alt|default('') %}
+
+						<div
+							class="max-w-4xl mx-auto">
+
+							{# Image principale : toujours paysage #}
+							<figure class="relative overflow-hidden bg-ms-black/5 aspect-[16/9]">
+								<img class="absolute inset-0 w-full h-full object-cover" src="{{ mainUrl }}" alt="{{ mainAlt }}" decoding="async" fetchpriority="high"/>
+							</figure>
+
+							{# Vignettes : toujours carrées #}
+							{% if imgs|length > 1 %}
+								<ul class="mt-4 grid grid-cols-5 gap-3">
+									{% for img in imgs %}
+										{% set full  = (img.sizes.large ?? img.sizes['2048x2048'] ?? img.url) %}
+										{% set thumb = (img.sizes.thumbnail ?? img.sizes.medium ?? img.url) %}
+
+										<li>
+											<button type="button" class="group block w-full" data-full="{{ full }}" data-alt="{{ img.alt|default('') }}" aria-current="{{ loop.first ? 'true' : 'false' }}">
+												<span class="relative block overflow-hidden aspect-square ring-1 ring-ms-light-black/10 aria-[current=true]:ring-2 aria-[current=true]:ring-ms-gold bg-ms-black/5">
+													<img src="{{ thumb }}" alt="" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+												</span>
+											</button>
+										</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+
+						</div>
+					{% endif %}
+				{% endif %}
+
+
+			</div>
+		</section>
+	{% endif %}
+
+	{#  2) SECTION 2 COLONNES (photo / texte + bouton téléchargement) #}
+	{% if section.acf_fc_layout == 'section_2_colonne' %}
+		<section class="py-8">
+			<div class="container mx-auto px-6 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+
+				{% for side in ['colonne_gauche','colonne_droite'] %}
+					{% set content = attribute(section, side) %}
+
+					{# TEXTE #}
+					{% if content and content.type_de_contenu == 'texte' %}
+						<div class="py-8 lg:py-12">
+							<div class="prose max-w-2xl text-ms-white whitespace-pre-line">
+								{{ content.texte|raw }}
+							</div>
+
+							{% set has_cta = content.cta_label and content.cta_url %}
+							{% if has_cta %}
+								<div class="mt-5 flex justify-center lg:justify-start">
+									{% set _f = content.cta_url %}
+									{% set _href  = (_f is defined and _f.url is defined) ? _f.url : _f %}
+									{% set _fname = (_f is defined and _f.filename is defined) ? _f.filename : ( (_f is defined and _f.title is defined) ? _f.title : '' ) %}
+									{% set _is_download = (_f is defined and _f.url is defined) %}
+
+									{% if _href %}
+										<a
+											href="{{ _href }}" {% if _is_download %} download {% if _fname %}="{{ _fname }}" {% endif %} {% endif %} class="group inline-flex items-stretch overflow-hidden bg-ms-gold text-ms-black hover:bg-opacity-90 transition-colors " aria-label="{{ content.cta_label }}{% if _fname %} – {{ _fname }}{% endif %}">
+											{# zone texte #}
+											<span class="px-8 py-3">
+												{{ content.cta_label }}
+											</span>
+										</a>
+									{% endif %}
+								</div>
+							{% endif %}
+						</div>
+					{% endif %}
+
+					{# PHOTO #}
+					{% if content and content.type_de_contenu == 'photo' and content.photo %}
+						<figure class="overflow-hidden">
+							<img src="{{ content.photo.url }}" alt="{{ content.photo.alt|default('') }}" class="block w-full h-[260px] md:h-[420px] object-cover rounded-tl-lg rounded-tr-3xl rounded-bl-3xl rounded-br-lg border-2 border-ms-gold" loading="lazy">
+						</figure>
+					{% endif %}
+				{% endfor %}
+
+			</div>
+		</section>
+	{% endif %}
+
+	{#  3) FAQ #}
+	{% if section.acf_fc_layout == 'faq' %}
+		<section class="py-4 lg:py-8">
+			<div class="container mx-auto px-6">
+
+				{% if section.faq_groups and section.faq_groups|length %}
+					{% for g in section.faq_groups %}
+						{% if g.items and g.items|length %}
+							<h2 class="font-display text-[48px] text-center mb-4">{{ __('FAQ', 'monsieur-sens') }}
+							</h2>
+							<div class="max-w-3xl mx-auto" data-faq-group>
+								{% for it in g.items %}
+									<details class="group border-t first:border-t-0" {{ loop.first ? 'open' }}>
+										<summary class="flex items-center gap-3 cursor-pointer select-none py-4 px-5">
+											<span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-base font-bold shrink-0 bg-ms-light-black text-ms-white transition-colors group-open:bg-ms-gold group-open:text-ms-black">
+												?
+											</span>
+											<span class="flex-1 font-bold transition-colors text-ms-white group-open:text-ms-white text-xl">
+												{{ it.q }}
+											</span>
+											<span class="ml-4 transition-all text-ms-gold group-open:text-ms-light-black group-open:rotate-180">
+												<i class="fa-solid fa-chevron-down"></i>
+											</span>
+										</summary>
+										<div class="px-5 pb-5">
+											<div class="border-t pt-4 prose max-w-none text-ms-white text-base font-normal">
+												{{ it.a|raw }}
+											</div>
+										</div>
+									</details>
+								{% endfor %}
+							</div>
+						{% endif %}
+					{% endfor %}
+				{% else %}
+					<p class="mt-6 opacity-70 text-center">
+						{{ __('Aucune question n’a encore été ajoutée.', 'monsieur-sens') }}
+					</p>
+				{% endif %}
+			</div>
+			{# Masque le chevron natif du <summary> (Safari/Chromium) #}
+			<style>
+				summary::-webkit-details-marker {
+					display: none
+				}
+			</style>
+ 
+		</section>
+	{% endif %}
+
+	{#  4) CHIFFRES CLÉS  #}
+	{% if section.acf_fc_layout == 'chiffres_cles' and section.kpis %}
+		<section class="py-12 lg:py-16 bg-ms-black">
+			<div
+				class="mx-auto max-w-7xl px-6">
+
+				{# Titre + déco #}
+				{% if section.titre_kpis %}
+					<div class="text-center">
+						<div class="mx-auto flex items-center justify-center gap-4 opacity-60">
+							<img src="{{ theme.link }}/static/img/deco-entonneurs.svg" alt="" aria-hidden="true" class="h-8 lg:h-10 w-auto -scale-x-100" loading="lazy">
+							<img src="{{ theme.link }}/static/img/deco-entonneurs.svg" alt="" aria-hidden="true" class="h-8 lg:h-10 w-auto" loading="lazy">
+						</div>
+
+						<h2 class="mt-4 font-displayan font-semibold uppercase tracking-wide text-[28px] lg:text-[47px] text-ms-white">
+							{{ section.titre_kpis }}
+						</h2>
+					</div>
+				{% endif %}
+
+				{# Bloc KPIs #}
+				<div class="mt-8 text-ms-white px-6 py-10">
+					<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-10 lg:gap-y-0">
+
+						{% for k in section.kpis %}
+							<li class="text-center px-4 lg:px-8">
+								<div class="font-displayan font-semibold text-[30px] lg:text-[47px] leading-none">
+									{{ k.value }}
+								</div>
+								<div class="mt-2 text-[13px] lg:text-[27px] font-normal leading-snug max-w-[220px] mx-auto">
+									{{ k.label }}
+								</div>
+							</li>
+						{% endfor %}
+
+					</ul>
+				</div>
+
+			</div>
+		</section>
+	{% endif %}
+
+
+	{#  5) LIEN DE PAGE #}
+	{% if section.acf_fc_layout == 'lien_page' %}
+		{% set buttons = section.bouton|default([]) %}
+
+		{% if buttons|length %}
+			<section class="py-8 lg:py-12">
+				<div class="mx-auto max-w-7xl px-6">
+					<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+
+						{% for b in buttons %}
+							{# page_link peut être URL (string), ID (string/int), ou parfois array #}
+							{% set raw  = b.lien|default('') %}
+							{% set href = (raw and raw.url) ? raw.url : raw %}
+							{% set href = href ? (((href ~ '') matches '/^\\d+$/') ? fn('get_permalink', href) : href) : '' %}
+
+							{% if href %}
+								<a href="{{ href }}" class="group inline-flex items-stretch overflow-hidden bg-ms-gold text-ms-black h-10 lg:h-11">
+									<span class="px-6 lg:px-8 flex items-center font-displayan font-semibold uppercase text-[12px] tracking-wide">
+										{{ b.titre ?: 'En savoir plus' }}
+									</span>
+								</a>
+							{% endif %}
+						{% endfor %}
+
+					</div>
+				</div>
+			</section>
+		{% endif %}
+	{% endif %}
+
+	{#  6) ENGAGEMENTS #}
+	{% if section.acf_fc_layout == 'engagements' %}
+		<section class="py-8 lg:py-12">
+			<div class="container mx-auto px-6">
+				{% if section.titre_engagement %}
+					<h2 class="font-displayan text-[32px] lg:text-[48px] text-center mb-8">{{ section.titre_engagement }}</h2>
+				{% endif %}
+				{% if section.card_engagement and section.card_engagement|length %}
+					<ul class="engagements-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+						{% for card in section.card_engagement %}
+							<li class="text-center">
+								{% if card.icone %}
+									<div class="mx-auto mb-4 w-16 h-16">
+										<img src="{{ card.icone.url }}" alt="{{ card.icone.alt|default('') }}" class="w-full h-full object-contain" loading="lazy">
+									</div>
+								{% endif %}
+								{% if card.label %}
+									<div class="font-semibold text-lg">{{ card.label }}</div>
+								{% endif %}
+							</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			</div>
+		</section>
+	{% endif %}
+
+	{#  7) PROFILS #}
+	{% if section.acf_fc_layout == 'profils' %}
+		<section class="py-8 lg:py-12">
+			<div class="container mx-auto px-6">
+				{% if section.titre_profil %}
+					<h2 class="font-display text-[32px] lg:text-[48px] text-center mb-8">{{ section.titre_profil }}</h2>
+				{% endif %}
+				{% if section.card_engagement and section.card_engagement|length %}
+					<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+						{% for card in section.card_engagement %}
+							<li class="profil-card bg-ms-light-black shadow-lg p-6 text-center">
+								{% if card.image_profil %}
+									<img src="{{ card.image_profil.url }}" alt="{{ card.image_profil.alt|default('') }}" class="mx-auto mb-4 w-32 h-32 object-cover rounded-full" loading="lazy">
+								{% endif %}
+								{% if card.titre_card %}
+									<h3 class="font-semibold text-xl mb-2">{{ card.titre_card }}</h3>
+								{% endif %}
+								{% if card.texte_card %}
+									<p class="text-base">{{ card.texte_card }}</p>
+								{% endif %}
+							</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			</div>
+		</section>
+	{% endif %}
+
+
+{% endfor %}
