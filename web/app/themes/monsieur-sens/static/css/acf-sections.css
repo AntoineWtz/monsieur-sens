@@ -125,13 +125,6 @@
   }
 }
 
-/* KPI */
-.kpi-card {
-  padding: 0.5rem 0;
-  border-radius: 0;
-  background: transparent;
-}
-
 /* FAQ improvements */
 [data-faq-group] details > summary {
   cursor: pointer;
@@ -167,4 +160,22 @@
   .prose ul li {
     font-size: 14px;
   }
+}
+
+/* KPIs hero tweaks */
+.kpis-hero-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.kpis-hero-left [data-kpi-value] {
+  line-height: 0.95;
+}
+.kpis-hero-right [data-kpi-item] {
+  will-change: transform, opacity;
+}
+
+/* make sure large numbers wrap nicely on very small screens */
+[data-kpi-value] {
+  word-break: break-word;
 }

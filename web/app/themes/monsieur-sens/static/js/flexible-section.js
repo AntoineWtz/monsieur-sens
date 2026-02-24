@@ -249,3 +249,76 @@ export function MasonryGrid() {
     // console.error('MasonryGrid error', e);
   }
 }
+
+// Animate KPI section: reveal with subtle translate + fade, optional count animation for numeric values
+export function AnimateKpis() {
+  try {
+    const groups = document.querySelectorAll("[data-kpis-hero]");
+    if (!groups.length) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const root = entry.target;
+
+          const items = Array.from(root.querySelectorAll("[data-kpi-item]"));
+          items.forEach((el, i) => {
+            const delay = i * 90;
+            el.style.transition = `opacity 520ms ease ${delay}ms, transform 520ms cubic-bezier(.2,.9,.2,1) ${delay}ms`;
+            el.style.opacity = 1;
+            el.style.transform = "translateY(0)";
+
+            const valueEl = el.querySelector("[data-kpi-value]");
+            if (valueEl && !valueEl.dataset.kpiAnimated) {
+              const text = valueEl.textContent.trim();
+              // detect pure-ish numeric strings (allow spaces, NBSP, dots, commas, signs)
+              const isNumeric = /^[\d\s\u00A0.,+-]+$/.test(text);
+              if (isNumeric) {
+                // normalize localized number to a JS float
+                let s = text.replace(/\u00A0/g, "").replace(/\s+/g, "");
+                if (s.indexOf(",") > -1 && s.indexOf(".") > -1) {
+                  // assume '.' thousands, ',' decimal
+                  s = s.replace(/\./g, "").replace(",", ".");
+                } else if (s.indexOf(",") > -1 && s.indexOf(".") === -1) {
+                  s = s.replace(",", ".");
+                }
+                const n = parseFloat(s);
+                if (!Number.isNaN(n)) {
+                  const duration = 1500; // slower animation
+                  const start = performance.now();
+                  const from = 0;
+                  const to = n;
+                  function step(now) {
+                    const t = Math.min(1, (now - start) / duration);
+                    const eased = t; // linear; could replace with easing
+                    const val = Math.round(from + (to - from) * eased);
+                    valueEl.textContent = val.toLocaleString("fr-FR");
+                    if (t < 1) requestAnimationFrame(step);
+                    else valueEl.dataset.kpiAnimated = "1";
+                  }
+                  requestAnimationFrame(step);
+                }
+              }
+              // otherwise: leave as-is (text)
+            }
+          });
+
+          io.unobserve(root);
+        });
+      },
+      { threshold: 0.15 },
+    );
+
+    groups.forEach((g) => {
+      // prepare items
+      g.querySelectorAll("[data-kpi-item]").forEach((el) => {
+        el.style.opacity = 0;
+        el.style.transform = "translateY(12px)";
+      });
+      io.observe(g);
+    });
+  } catch (e) {
+    // silent
+  }
+}

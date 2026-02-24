@@ -27,7 +27,7 @@
 					<button type="button" class="cw-video-open group relative w-full overflow-hidden focus:outline-none" data-video-url="{{ section.video|trim }}">
 						<img src="{{ cover.url }}" alt="{{ cover.alt|default('Vidéo') }}" class="block w-full h-[220px] md:h-[540px] object-cover rounded-tl-3xl rounded-tr-lg rounded-bl-lg rounded-br-3xl" loading="lazy">
 						<span class="absolute inset-0 bg-ms-black/25 group-hover:bg-ms-black/35 transition"></span>
-						<span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-ms-white/95 text-ms-black shadow-lg rounded-full opacity-90 group-hover:opacity-100 transition" aria-label="Lire la vidéo">
+						<span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-ms-white/95 text-ms-black shadow-lg rounded-3xl opacity-90 group-hover:opacity-100 transition" aria-label="Lire la vidéo">
 							<i class="fa-solid fa-play text-xl md:text-2xl translate-x-[2px]"></i>
 						</span>
 					</button>
@@ -86,10 +86,8 @@
 									{% set _is_download = (_f is defined and _f.url is defined) %}
 
 									{% if _href %}
-										<a
-											href="{{ _href }}" {% if _is_download %} download {% if _fname %}="{{ _fname }}" {% endif %} {% endif %} class="group inline-flex items-stretch overflow-hidden bg-ms-gold text-ms-black hover:bg-opacity-90 transition-colors " aria-label="{{ content.cta_label }}{% if _fname %} – {{ _fname }}{% endif %}">
-											{# zone texte #}
-											<span class="px-8 py-3">
+										<a href="{{ _href }}" {% if _is_download %} download {% if _fname %}="{{ _fname }}" {% endif %} {% endif %} class="inline-block bg-ms-gold text-black py-2 px-6 rounded-lg font-semibold border-2 border-transparent hover:bg-black hover:text-ms-gold hover:border-ms-gold transition duration-300" aria-label="{{ content.cta_label }}{% if _fname %} – {{ _fname }}{% endif %}">
+											<span>
 												{{ content.cta_label }}
 											</span>
 										</a>
@@ -119,7 +117,7 @@
 				{% if section.faq_groups and section.faq_groups|length %}
 					{% for g in section.faq_groups %}
 						{% if g.items and g.items|length %}
-							<h2 class="font-display text-[48px] text-center mb-4">{{ __('FAQ', 'monsieur-sens') }}
+							<h2 class="font-display text-[48px] text-center mb-4 uppercase">{{ __('FAQ', 'monsieur-sens') }}
 							</h2>
 							<div class="max-w-4xl mx-auto" data-faq-group>
 								{% for it in g.items %}
@@ -170,33 +168,47 @@
 				{# Titre + déco #}
 				{% if section.titre_kpis %}
 					<div class="text-center">
-						<div class="mx-auto flex items-center justify-center gap-4 opacity-60">
-							<img src="{{ theme.link }}/static/img/deco-entonneurs.svg" alt="" aria-hidden="true" class="h-8 lg:h-10 w-auto -scale-x-100" loading="lazy">
-							<img src="{{ theme.link }}/static/img/deco-entonneurs.svg" alt="" aria-hidden="true" class="h-8 lg:h-10 w-auto" loading="lazy">
-						</div>
-
-						<h2 class="mt-4 font-displayan font-semibold uppercase tracking-wide text-[28px] lg:text-[47px] text-ms-white">
+						<h2 class="mt-4 font-display tracking-wide text-[28px] lg:text-[47px] text-ms-white">
 							{{ section.titre_kpis }}
 						</h2>
 					</div>
 				{% endif %}
 
-				{# Bloc KPIs #}
-				<div class="mt-8 text-ms-white px-6 py-10">
-					<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-10 lg:gap-y-0">
+				{# Bloc KPIs - Option 2 : Asymétrique hero #}
+				<div class="mt-10 text-ms-white px-6">
+					<div
+						class="grid grid-cols-1 lg:grid-cols-12 gap-2 md:gap-6 items-stretch" data-kpis-hero>
 
-						{% for k in section.kpis %}
-							<li class="text-center px-4 lg:px-8">
-								<div class="font-displayan font-semibold text-[30px] lg:text-[47px] leading-none">
-									{{ k.value }}
+						{# Left: hero KPI principal (take first KPI if present) #}
+						<div class="lg:col-span-5 bg-ms-light-black p-6 rounded-2xl flex flex-col justify-center" data-kpi-item>
+							{% set main = section.kpis|first %}
+							{% if main %}
+								<div class="text-ms-gold font-display font-semibold leading-none text-[56px] md:text-[72px] lg:text-[96px]">
+									<span data-kpi-value>{{ main.value }}</span>
 								</div>
-								<div class="mt-2 text-[13px] lg:text-[27px] font-normal leading-snug max-w-[220px] mx-auto">
-									{{ k.label }}
-								</div>
-							</li>
-						{% endfor %}
+								{% if main.label %}
+									<div class="mt-4 text-[16px] md:text-[18px] tracking-wide font-semibold text-ms-white">
+										{{ main.label }}
+									</div>
+								{% endif %}
+							{% endif %}
+						</div>
 
-					</ul>
+						{# Right: grid of remaining KPIs #}
+						<div class="lg:col-span-7">
+							<ul class="grid grid-cols-2 gap-2 md:gap-6">
+								{% for k in section.kpis|slice(1) %}
+									<li class="p-4 bg-ms-light-black rounded-tl-3xl rounded-br-3xl rounded-lg" data-kpi-item>
+										<div class="text-[28px] md:text-[44px] font-display font-bold text-ms-gold" data-kpi-value>{{ k.value }}</div>
+										{% if k.label %}
+											<div class="mt-2 text-[14px] md:text-[18px] text-ms-white/90">{{ k.label }}</div>
+										{% endif %}
+									</li>
+								{% endfor %}
+							</ul>
+						</div>
+
+					</div>
 				</div>
 
 			</div>
@@ -220,8 +232,13 @@
 							{% set href = href ? (((href ~ '') matches '/^\\d+$/') ? fn('get_permalink', href) : href) : '' %}
 
 							{% if href %}
-								<a href="{{ href }}" class="group inline-flex items-stretch overflow-hidden bg-ms-gold text-ms-black h-10 lg:h-11">
-									<span class="px-6 lg:px-8 flex items-center font-displayan font-semibold uppercase text-[12px] tracking-wide">
+								{# first button = inverse du bouton Contact; suivants = bouton Contact (ou comme section deux colonnes) #}
+								{% set btn_inverse = 'inline-block bg-black text-ms-white py-2 px-6 rounded-lg font-semibold border-2 border-ms-gold hover:bg-ms-gold hover:text-black transition duration-300' %}
+								{% set btn_contact = 'inline-block bg-ms-gold text-black py-2 px-6 rounded-lg font-semibold border-2 border-transparent hover:bg-black hover:text-ms-white hover:border-ms-gold transition duration-300' %}
+								{% set btn_classes = (loop.index == 1) ? btn_inverse : btn_contact %}
+
+								<a href="{{ href }}" class="{{ btn_classes }}" aria-label="{{ b.titre ?: 'En savoir plus' }}">
+									<span class="flex items-center font-semibold tracking-wide">
 										{{ b.titre ?: 'En savoir plus' }}
 									</span>
 								</a>
