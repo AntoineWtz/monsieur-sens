@@ -5,7 +5,7 @@
 
 	{# 1) SECTION 1 COLONNE (texte / photo / vidéo / diaporama) #}
 	{% if section.acf_fc_layout == 'section_1_colonne' %}
-		<section class="py-4 lg:py-8">
+		<section class="py-6 lg:py-12">
 			<div
 				class="container mx-auto px-6">
 
@@ -64,7 +64,7 @@
 
 	{#  2) SECTION 2 COLONNES (photo / texte + bouton téléchargement) #}
 	{% if section.acf_fc_layout == 'section_2_colonne' %}
-		<section class="py-8">
+		<section class="py-6 lg:py-12">
 			<div class="container mx-auto px-6 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
 				{% for side in ['colonne_gauche','colonne_droite'] %}
@@ -111,7 +111,7 @@
 
 	{#  3) FAQ #}
 	{% if section.acf_fc_layout == 'faq' %}
-		<section class="py-4 lg:py-8">
+		<section class="py-6 lg:py-12">
 			<div class="container mx-auto px-6">
 
 				{% if section.faq_groups and section.faq_groups|length %}
@@ -161,7 +161,7 @@
 
 	{#  4) CHIFFRES CLÉS  #}
 	{% if section.acf_fc_layout == 'chiffres_cles' and section.kpis %}
-		<section class="py-12 lg:py-16 bg-ms-black">
+		<section class="py-6 lg:py-12 bg-ms-black">
 			<div
 				class="mx-auto max-w-7xl px-6">
 
@@ -221,7 +221,7 @@
 		{% set buttons = section.bouton|default([]) %}
 
 		{% if buttons|length %}
-			<section class="py-8 lg:py-12">
+			<section class="py-6 lg:py-12">
 				<div class="mx-auto max-w-7xl px-6">
 					<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
 
@@ -253,7 +253,7 @@
 
 	{#  6) ENGAGEMENTS — modern cards with circular icons #}
 	{% if section.acf_fc_layout == 'engagements' %}
-		<section class="py-8 lg:py-12">
+		<section class="py-6 lg:py-12">
 			<div class="container mx-auto px-6">
 				{% if section.titre_engagement %}
 					<h2 class="font-display text-[32px] lg:text-[48px] text-center mb-8">{{ section.titre_engagement }}</h2>
@@ -299,7 +299,7 @@
 
 	{#  7) PROFILS #}
 	{% if section.acf_fc_layout == 'profils' %}
-		<section class="py-8 lg:py-12">
+		<section class="py-6 lg:py-12">
 			<div class="container mx-auto px-6">
 				{% if section.titre_profil %}
 					<h2 class="font-display text-[32px] lg:text-[48px] text-center mb-24">{{ section.titre_profil }}</h2>
@@ -321,7 +321,7 @@
 										<h3 class="font-semibold text-xl mb-2">{{ card.titre_card }}</h3>
 									{% endif %}
 									{% if card.texte_card %}
-										<p class="text-base text-ms-white/80">{{ card.texte_card }}</p>
+										<p class="text-ms-white/80">{{ card.texte_card }}</p>
 									{% endif %}
 								</div>
 							</li>
