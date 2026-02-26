@@ -1,0 +1,15 @@
+<article class="plat-card">
+	<button type="button" class="plat-card__btn block w-full text-left focus:outline-none" data-plat-img="{{ plat.thumbnail.src }}" aria-label="{{ plat.title }}">
+		<div class="relative overflow-hidden rounded-lg">
+			{% if plat.thumbnail %}
+				<img src="{{ plat.thumbnail.src }}" alt="{{ plat.title }}" loading="lazy" class="w-full h-80 sm:h-96 object-cover block"/>
+			{% else %}
+				<div class="w-full h-80 sm:h-96 bg-gray-100 flex items-center justify-center">{{ plat.title }}</div>
+			{% endif %}
+
+			<div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end justify-center opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity duration-200">
+				<div class="text-white font-semibold text-lg p-4 text-center">{{ plat.title }}</div>
+			</div>
+		</div>
+	</button>
+</article>
