@@ -251,7 +251,7 @@
 		{% endif %}
 	{% endif %}
 
-	{#  6) ENGAGEMENTS #}
+	{#  6) ENGAGEMENTS — modern cards with circular icons #}
 	{% if section.acf_fc_layout == 'engagements' %}
 		<section class="py-8 lg:py-12">
 			<div class="container mx-auto px-6">
@@ -259,16 +259,35 @@
 					<h2 class="font-display text-[32px] lg:text-[48px] text-center mb-8">{{ section.titre_engagement }}</h2>
 				{% endif %}
 				{% if section.card_engagement and section.card_engagement|length %}
-					<ul class="engagements-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+					<ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 						{% for card in section.card_engagement %}
-							<li class="text-center">
-								{% if card.icone %}
-									<div class="mx-auto mb-4 w-16 h-16">
-										<img src="{{ card.icone.url }}" alt="{{ card.icone.alt|default('') }}" class="w-full h-full object-contain" loading="lazy">
-									</div>
-								{% endif %}
+							<li class="bg-ms-light-black/40 hover:bg-ms-light-black/60 rounded-tl-3xl rounded-tr-lg rounded-bl-lg rounded-br-3xl p-6 flex flex-col items-center text-center gap-3 transform transition-transform duration-300 hover:-translate-y-2 shadow-sm">
+								<div class="w-20 h-20 rounded-full bg-gradient-to-tr from-ms-gold/10 to-ms-gold/20 flex items-center justify-center mb-2 overflow-hidden">
+									{% if card.icone %}
+										{# If ACF returned a full array/object with sizes #}
+										{% if card.icone.sizes is defined %}
+											{% set _src = (card.icone.sizes.medium_large ?? card.icone.sizes.medium ?? card.icone.url) %}
+											{% set _alt = card.icone.alt|default(card.label|default('')) %}
+											{# Fallback: ACF returned an attachment ID (int/string) - use WP functions #}
+										{% else %}
+											{% set _src = fn('wp_get_attachment_image_url', card.icone, 'medium_large') ?: fn('wp_get_attachment_image_url', card.icone, 'full') ?: '' %}
+											{% set _alt = fn('get_post_meta', card.icone, '_wp_attachment_image_alt', true) ?: (card.label|default('')) %}
+										{% endif %}
+
+										{% if _src %}
+											<img src="{{ _src }}" alt="{{ _alt }}" class="w-full h-full object-cover rounded-full" loading="lazy" decoding="async" fetchpriority="low">
+										{% else %}
+											<span class="w-full h-full bg-ms-gold rounded-full inline-block"></span>
+										{% endif %}
+									{% else %}
+										<span class="w-full h-full bg-ms-gold rounded-full inline-block"></span>
+									{% endif %}
+								</div>
 								{% if card.label %}
-									<div class="font-semibold text-lg">{{ card.label }}</div>
+									<div class="font-semibold text-lg leading-tight">{{ card.label }}</div>
+								{% endif %}
+								{% if card.description %}
+									<div class="text-ms-white/80 text-sm mt-2 max-w-[220px]">{{ card.description }}</div>
 								{% endif %}
 							</li>
 						{% endfor %}
@@ -283,21 +302,28 @@
 		<section class="py-8 lg:py-12">
 			<div class="container mx-auto px-6">
 				{% if section.titre_profil %}
-					<h2 class="font-display text-[32px] lg:text-[48px] text-center mb-8">{{ section.titre_profil }}</h2>
+					<h2 class="font-display text-[32px] lg:text-[48px] text-center mb-24">{{ section.titre_profil }}</h2>
 				{% endif %}
 				{% if section.card_engagement and section.card_engagement|length %}
-					<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+					<ul class="grid grid-cols-2 gap-8 justify-items-center">
 						{% for card in section.card_engagement %}
-							<li class="profil-card bg-ms-light-black shadow-lg p-6 text-center">
-								{% if card.image_profil %}
-									<img src="{{ card.image_profil.url }}" alt="{{ card.image_profil.alt|default('') }}" class="mx-auto mb-4 w-32 h-32 object-cover rounded-full" loading="lazy">
-								{% endif %}
-								{% if card.titre_card %}
-									<h3 class="font-semibold text-xl mb-2">{{ card.titre_card }}</h3>
-								{% endif %}
-								{% if card.texte_card %}
-									<p class="text-base">{{ card.texte_card }}</p>
-								{% endif %}
+							<li class="profil-card bg-ms-light-black/50 shadow-lg p-6 text-center relative overflow-visible pt-12 max-w-sm w-full rounded-tl-lg rounded-tr-3xl rounded-bl-3xl rounded-br-lg border-2 border-ms-gold">
+								<div class="absolute -top-10 left-1/2 -translate-x-1/2">
+									{% if card.image_profil %}
+										<img src="{{ card.image_profil.url }}" alt="{{ card.image_profil.alt|default('') }}" class="w-24 h-24 object-cover rounded-full border-2 border-ms-gold shadow-md" loading="lazy">
+									{% else %}
+										<span class="w-24 h-24 inline-block rounded-full bg-ms-gold border-2 border-ms-gold"></span>
+									{% endif %}
+								</div>
+
+								<div class="mt-8">
+									{% if card.titre_card %}
+										<h3 class="font-semibold text-xl mb-2">{{ card.titre_card }}</h3>
+									{% endif %}
+									{% if card.texte_card %}
+										<p class="text-base text-ms-white/80">{{ card.texte_card }}</p>
+									{% endif %}
+								</div>
 							</li>
 						{% endfor %}
 					</ul>
