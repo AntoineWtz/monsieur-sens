@@ -6,6 +6,7 @@ import {
 } from "./flexible-section";
 
 import { GalleryModal } from "./gallery";
+import { SuggestionsRotator } from "./suggestions";
 
 document.addEventListener("DOMContentLoaded", () => {
   VideoModal();
@@ -13,4 +14,5 @@ document.addEventListener("DOMContentLoaded", () => {
   MasonryGrid();
   AnimateKpis();
   GalleryModal();
+  SuggestionsRotator();
 });
