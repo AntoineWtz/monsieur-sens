@@ -1,6 +1,6 @@
 <article class="plat-card">
 	<button type="button" class="plat-card__btn block w-full text-left focus:outline-none" data-plat-img="{{ plat.thumbnail.src }}" aria-label="{{ plat.title }}">
-		<div class="relative overflow-hidden rounded-lg">
+		<div class="relative overflow-hidden rounded-tl-3xl rounded-tr-lg rounded-bl-lg rounded-br-3xl shadow-md ring-2 ring-ms-gold/80 bg-white/5 backdrop-blur-sm h-full flex flex-col">
 			{% if plat.thumbnail %}
 				<img src="{{ plat.thumbnail.src }}" alt="{{ plat.title }}" loading="lazy" class="w-full h-80 sm:h-96 object-cover block"/>
 			{% else %}

@@ -1,49 +1,105 @@
-// Galerie: ouvre une modal avec l'image du plat (utilisé sur page-galerie)
-export function GalleryModal() {
+// Galerie: expansion inline des images
+export function GalleryInline() {
   try {
-    const modal = document.getElementById("plat-image-modal");
-    if (!modal) return;
+    let expanded = null;
 
-    const img = modal.querySelector("#plat-image-modal__img");
-    const caption = modal.querySelector("#plat-image-modal__caption");
-    const backdrop = modal.querySelector("[data-modal-close]");
+    // cache collapsed heights for smoother transitions
+    document.querySelectorAll(".plat-card img").forEach((img) => {
+      try {
+        const h = img.getBoundingClientRect().height;
+        img.dataset.collapsedHeight = `${Math.round(h)}px`;
+      } catch (e) {
+        img.dataset.collapsedHeight = "";
+      }
+    });
 
-    function open(src, alt) {
-      img.src = src || "";
-      img.alt = alt || "";
-      caption.textContent = alt || "";
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
-      document.body.classList.add("overflow-hidden");
+    function collapseCard(card) {
+      if (!card) return;
+      const img = card.querySelector("img");
+      card.classList.remove("expanded");
+      // remove inline overrides
+      if (img) {
+        // animate back to collapsed height for smoothness
+        const collapsed = img.dataset.collapsedHeight || "";
+        if (collapsed) {
+          // set current pixel height then animate to collapsed
+          const cur = `${Math.round(img.getBoundingClientRect().height)}px`;
+          img.style.maxHeight = cur;
+          // force reflow
+          // eslint-disable-next-line no-unused-expressions
+          img.offsetHeight;
+          img.style.transition = "max-height 620ms cubic-bezier(.2,.8,.2,1)";
+          img.style.maxHeight = collapsed;
+          // cleanup after transition
+          img.addEventListener("transitionend", function _t() {
+            img.style.maxHeight = "";
+            img.style.height = "";
+            img.style.width = "";
+            img.style.transition = "";
+            img.removeEventListener("transitionend", _t);
+          });
+        } else {
+          img.style.maxHeight = "";
+          img.style.height = "";
+          img.style.width = "";
+          img.style.transition = "";
+        }
+      }
+      expanded = null;
     }
 
-    function close() {
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-      document.body.classList.remove("overflow-hidden");
-      img.src = "";
-      img.alt = "";
-      caption.textContent = "";
+    function expandCard(card) {
+      if (!card) return;
+      const img = card.querySelector("img");
+      // collapse previous
+      if (expanded && expanded !== card) collapseCard(expanded);
+      card.classList.add("expanded");
+      if (img) {
+        // animate from current height to target max-height for smooth expand
+        const cur = `${Math.round(img.getBoundingClientRect().height)}px`;
+        img.style.maxHeight = cur;
+        img.style.width = "100%";
+        // force reflow
+        // eslint-disable-next-line no-unused-expressions
+        img.offsetHeight;
+        img.style.transition = "max-height 620ms cubic-bezier(.2,.8,.2,1)";
+        img.style.maxHeight = "80vh";
+        img.style.height = "auto";
+        // cleanup transition property after end
+        img.addEventListener("transitionend", function _te() {
+          img.style.transition = "";
+          img.removeEventListener("transitionend", _te);
+        });
+      }
+      expanded = card;
     }
 
-    // openers: buttons with data-plat-img
     document.querySelectorAll("button[data-plat-img]").forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        const src = btn.getAttribute("data-plat-img");
-        const alt = btn.getAttribute("aria-label") || "";
-        if (src) open(src, alt);
+        const card = btn.closest(".plat-card");
+        if (!card) return;
+        if (card.classList.contains("expanded")) {
+          collapseCard(card);
+        } else {
+          expandCard(card);
+          // scroll into view a bit to show expanded image on small screens
+          card.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
       });
     });
 
-    // close listeners
-    modal
-      .querySelectorAll("[data-modal-close]")
-      .forEach((el) => el.addEventListener("click", close));
-
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !modal.classList.contains("hidden")) close();
+      if (e.key === "Escape" && expanded) collapseCard(expanded);
     });
-  } catch (e) {
+
+    // click outside an expanded card collapses it
+    document.addEventListener("click", (e) => {
+      if (!expanded) return;
+      const isInside =
+        e.target.closest && e.target.closest(".plat-card") === expanded;
+      if (!isInside) collapseCard(expanded);
+    });
+  } catch (err) {
     // silent
   }
 }

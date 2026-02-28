@@ -5,7 +5,7 @@ import {
   AnimateKpis,
 } from "./flexible-section";
 
-import { GalleryModal } from "./gallery";
+import { GalleryInline } from "./gallery";
 import { SuggestionsRotator } from "./suggestions";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -13,6 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
   FaqGroups();
   MasonryGrid();
   AnimateKpis();
-  GalleryModal();
+  GalleryInline();
   SuggestionsRotator();
 });

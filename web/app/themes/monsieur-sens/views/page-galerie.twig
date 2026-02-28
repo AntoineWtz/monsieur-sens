@@ -1,10 +1,11 @@
 {% extends "base.twig" %}
 
-
 {% block content %}
-	<div class="container max-w-7xl mx-auto px-4 py-8 text-center">
-		<h1 class="text-4xl md:text-5xl lg:text-6xl font-display uppercase font-bold mb-6 heading-gold-gradient">{{ post.title }}</h1>
-		<p class="mt-2 text-ms-white">{{ __('Découvrez nos créations — cliquez sur une image pour l\'agrandir.', 'awstarter') }}</p>
+
+<div class="container max-w-7xl mx-auto px-4 py-8 text-center">
+
+	<h1 class="text-4xl md:text-5xl lg:text-6xl font-display uppercase font-bold mb-6 heading-gold-gradient">{{ post.title }}</h1>
+	<p class="mt-2 text-ms-white">{{ __('Découvrez nos créations — cliquez sur une image pour l\'agrandir.', 'awstarter') }}</p>
 
 		{% if plats and plats|length > 0 %}
 			<section class="grid gap-4 mt-6 grid-cols-1 sm:grid-cols-2" aria-live="polite">
@@ -16,14 +17,6 @@
 			<p class="mt-6">{{ __('Aucun plat avec image disponible pour le moment.', 'awstarter') }}</p>
 		{% endif %}
 
-		{# Modal image (hidden by default) #}
-		<div id="plat-image-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-			<div class="fixed inset-0 bg-black/70" data-modal-close></div>
-			<div class="relative max-w-5xl w-full mx-auto">
-				<button type="button" data-modal-close class="absolute -top-4 -right-4 bg-black rounded-full py-2 px-3 shadow-lg focus:outline-none">✕</button>
-				<img id="plat-image-modal__img" src="" alt="" class="w-full h-auto rounded-lg shadow-lg max-h-[80vh] object-contain"/>
-				<div id="plat-image-modal__caption" class="mt-2 text-center text-white/90"></div>
-			</div>
-		</div>
 	</div>
+
 {% endblock %}

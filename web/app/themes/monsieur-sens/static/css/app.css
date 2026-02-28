@@ -26,3 +26,16 @@ html {
   background-clip: text;
   color: transparent;
 }
+
+/* Gallery: expanded plat card state */
+.plat-card.expanded img {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 80vh !important;
+  object-fit: contain;
+  transition: max-height 420ms cubic-bezier(.2,.8,.2,1);
+}
+
+.plat-card {
+  transition: all 220ms ease;
+}
