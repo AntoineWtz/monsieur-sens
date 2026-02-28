@@ -4,47 +4,94 @@
 
 	<div class="container max-w-7xl mx-auto px-4 py-12">
 		<header class="text-center mb-12">
-			<h1 class="text-4xl md:text-5xl lg:text-6xl font-display uppercase font-bold mb-6 text-ms-gold">{{ post.title }}</h1>
-			<p class="mt-4 text-lg text-white/70 max-w-2xl mx-auto">{{ __('Une sélection raffinée signée Monsieur Sens — portions et présentations adaptées à vos événements. Parcourez par type et contactez-nous pour personnaliser.', 'awstarter') }}</p>
+			<h1 class="text-4xl md:text-5xl lg:text-6xl font-display uppercase font-bold mb-6 bg-gradient-to-r from-ms-gold via-yellow-400 to-ms-gold/10 bg-clip-text text-transparent">{{ post.title }}</h1>
+			<p class="mt-4 text-lg text-white/70 max-w-3xl mx-auto">{{ __('Une sélection raffinée signée Monsieur Sens — portions et présentations adaptées à vos événements. Parcourez par type et contactez-nous pour personnaliser.', 'awstarter') }}</p>
 		</header>
 
 		{% for group in suggestion_groups %}
-			<section class="my-12 border-2 border-ms-gold rounded-lg p-4">
-				<div class="flex flex-col md:flex-row gap-8 items-start {{ group.title_left ? '' : 'md:flex-row-reverse' }}">
-					<div class="md:w-1/2 flex items-start">
-						<div class="sticky top-24 w-full flex flex-col items-center">
+			<section class="my-16 rounded-2xl p-6 bg-white/5 ring-1 ring-ms-gold/10">
+				{% set posts = group.posts ?: [] %}
+				{% set preview = posts|slice(0,4) %}
+				{% set rest = posts|slice(4) %}
+
+				<div
+					class="md:grid md:grid-cols-3 gap-y-0 gap-6 items-stretch">
+					{# If title_left: carousel in first column, preview grid in next two columns; else preview first then carousel in col 3 #}
+					{% if group.title_left %}
+						<div class="md:col-span-1">
 							<h2 class="text-2xl font-semibold text-center">{{ group.title }}</h2>
+							<div class="mt-2 w-32 h-1 bg-ms-gold mx-auto rounded-full" aria-hidden="true"></div>
 							{% if group.special %}
 								<p class="mt-3 text-sm text-gray-500 text-center">{{ __('Sur demande uniquement — devis personnalisé', 'awstarter') }}</p>
 							{% endif %}
 
-							{% if group.posts and group.posts|length > 0 %}
+							{% if posts and posts|length > 0 %}
 								<div class="mt-4 w-full">
-									<div class="relative w-full h-60 rounded overflow-hidden suggestion-rotator" data-interval="3500">
-										{% for plat in group.posts %}
-											{% if plat.thumbnail %}
-												<img src="{{ plat.thumbnail.src }}" alt="{{ plat.title }}" loading="lazy" class="rotator-image absolute inset-0 w-full h-full object-cover transition-opacity duration-700 {{ loop.first ? 'opacity-100' : 'opacity-0' }}" />
-											{% endif %}
-										{% endfor %}
+									<div class="relative w-full h-60 rounded overflow-hidden suggestion-rotator" data-interval="3500" role="region" aria-roledescription="carousel" aria-label="{{ group.title }}">
+										<div class="absolute inset-0">
+											{% for plat in posts %}
+												{% if plat.thumbnail %}
+													<img src="{{ plat.thumbnail.src }}" data-title="{{ plat.title }}" alt="{{ plat.title }}" loading="lazy" class="rotator-image absolute inset-0 w-full h-full object-cover transition-opacity duration-700 {{ loop.first ? 'opacity-100' : 'opacity-0' }}"/>
+												{% endif %}
+											{% endfor %}
+										</div>
 									</div>
 								</div>
 							{% endif %}
 						</div>
-					</div>
 
-					<div class="md:w-1/2">
-						{% if group.special %}
-							<div class="bg-gray-50 p-6 rounded-lg">
-								<p class="text-gray-700">{{ __('Nous proposons nos plateaux repas pour entreprises et événements. Pour les tarifs et compositions, merci de nous contacter :', 'awstarter') }}
-									<a href="/contact" class="text-blue-600 underline">{{ __('Demander un devis', 'awstarter') }}</a>.</p>
-							</div>
-						{% elseif group.posts and group.posts|length > 0 %}
-							<div class="grid gap-4 grid-cols-1 sm:grid-cols-2">
-								{% for plat in group.posts %}
+						<div class="md:col-span-2">
+							{% if preview and preview|length > 0 %}
+								<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 auto-rows-[minmax(0,1fr)] items-stretch">
+									{% for plat in preview %}
+										{% include 'partial/suggestion-plat.twig' with {plat: plat} %}
+									{% endfor %}
+								</div>
+							{% endif %}
+						</div>
+					{% else %}
+						<div class="md:col-span-2">
+							{% if preview and preview|length > 0 %}
+								<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 auto-rows-[minmax(0,1fr)] items-stretch">
+									{% for plat in preview %}
+										{% include 'partial/suggestion-plat.twig' with {plat: plat} %}
+									{% endfor %}
+								</div>
+							{% endif %}
+						</div>
+
+						<div class="md:col-span-1 md:col-start-3">
+							<h2 class="text-2xl font-semibold text-center">{{ group.title }}</h2>
+							<div class="mt-2 w-32 h-1 bg-ms-gold mx-auto rounded-full" aria-hidden="true"></div>
+							{% if group.special %}
+								<p class="mt-3 text-sm text-gray-500 text-center">{{ __('Sur demande uniquement — devis personnalisé', 'awstarter') }}</p>
+							{% endif %}
+
+							{% if posts and posts|length > 0 %}
+								<div class="mt-4 w-full">
+									<div class="relative w-full h-60 rounded overflow-hidden suggestion-rotator" data-interval="3500" role="region" aria-roledescription="carousel" aria-label="{{ group.title }}">
+										<div class="absolute inset-0">
+											{% for plat in posts %}
+												{% if plat.thumbnail %}
+													<img src="{{ plat.thumbnail.src }}" data-title="{{ plat.title }}" alt="{{ plat.title }}" loading="lazy" class="rotator-image absolute inset-0 w-full h-full object-cover transition-opacity duration-700 {{ loop.first ? 'opacity-100' : 'opacity-0' }}"/>
+												{% endif %}
+											{% endfor %}
+										</div>
+									</div>
+								</div>
+							{% endif %}
+						</div>
+					{% endif %}
+
+					{# Remaining posts rendered full width below the top row, arranged in three columns to fill available space #}
+					<div class="md:col-span-3 mt-6">
+						{% if rest and rest|length > 0 %}
+							<div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-[minmax(0,1fr)] items-stretch">
+								{% for plat in rest %}
 									{% include 'partial/suggestion-plat.twig' with {plat: plat} %}
 								{% endfor %}
 							</div>
-						{% else %}
+						{% elseif not posts or posts|length == 0 %}
 							<p class="text-gray-600">{{ __('Aucun élément disponible pour cette section pour le moment.', 'awstarter') }}</p>
 						{% endif %}
 					</div>
