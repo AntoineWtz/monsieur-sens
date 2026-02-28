@@ -5,11 +5,17 @@
 	<div class="container max-w-7xl mx-auto px-4 py-12">
 		<header class="text-center mb-12">
 			<h1 class="text-4xl md:text-5xl lg:text-6xl font-display uppercase font-bold mb-6 heading-gold-gradient">{{ post.title }}</h1>
-			<p class="mt-4 text-lg text-white/70 max-w-3xl mx-auto">{{ __('Une sélection raffinée signée Monsieur Sens — portions et présentations adaptées à vos événements. Parcourez par type et contactez-nous pour personnaliser.', 'awstarter') }}</p>
+			<p class="mt-4 text-lg text-white/70 max-w-3xl mx-auto">{{ sous_titre_suggestions }}</p>
+			{# Bouton pour télécharger le menu complet si champ PDF présent #}
+			{% if menu_pdf %}
+				<div class="mt-8 text-center">
+					<a href="{{ menu_pdf.url }}" class="inline-block bg-ms-gold text-black py-2 px-6 rounded-lg font-semibold border-2 border-transparent hover:bg-black hover:text-ms-gold hover:border-ms-gold transition duration-300" target="_blank" rel="noopener">{{ __('Télécharger le menu complet', 'awstarter') }}</a>
+				</div>
+			{% endif %}
 		</header>
 
 		{% for group in suggestion_groups %}
-			<section class="my-16 rounded-2xl p-6 bg-black ring-1 ring-ms-gold/10">
+			<section class="my-16 rounded-2xl p-6 bg-black/5 ring-1 ring-ms-gold/10">
 				{% set posts = group.posts ?: [] %}
 				{% set preview = posts|slice(0,4) %}
 				{% set rest = posts|slice(4) %}
@@ -21,9 +27,6 @@
 						<div class="md:col-span-1">
 							<h2 class="text-2xl font-semibold text-center">{{ group.title }}</h2>
 							<div class="mt-2 mb-7 w-32 h-1 bg-ms-gold mx-auto rounded-full" aria-hidden="true"></div>
-							{% if group.special %}
-								<p class="mt-3 text-sm text-gray-500 text-center">{{ __('Sur demande uniquement — devis personnalisé', 'awstarter') }}</p>
-							{% endif %}
 
 							{% if posts and posts|length > 0 %}
 								<div class="mt-4 w-full">
@@ -63,9 +66,6 @@
 						<div class="md:col-span-1 md:col-start-3">
 							<h2 class="text-2xl font-semibold text-center">{{ group.title }}</h2>
 							<div class="mt-2 mb-7 w-32 h-1 bg-ms-gold mx-auto rounded-full" aria-hidden="true"></div>
-							{% if group.special %}
-								<p class="mt-3 text-sm text-gray-500 text-center">{{ __('Sur demande uniquement — devis personnalisé', 'awstarter') }}</p>
-							{% endif %}
 
 							{% if posts and posts|length > 0 %}
 								<div class="mt-4 w-full">
@@ -99,12 +99,29 @@
 			</section>
 		{% endfor %}
 
-
-		{# Bouton pour télécharger le menu complet si champ PDF présent #}
-		{% if menu_pdf %}
-			<div class="mt-8 text-center">
-				<a href="{{ menu_pdf.url }}" class="inline-block bg-ms-gold text-black py-2 px-6 rounded-lg font-semibold border-2 border-transparent hover:bg-black hover:text-ms-gold hover:border-ms-gold transition duration-300" target="_blank" rel="noopener">{{ __('Télécharger le menu complet', 'awstarter') }}</a>
-			</div>
+		{# Plateau repas via ACF: render full-width block if field provided #}
+		{% if plateau_repas %}
+			<section class="mt-12">
+				<div class="rounded-2xl p-8 bg-gradient-to-r from-black/60 to-black/40 ring-1 ring-ms-gold/10 flex flex-col md:flex-row items-center justify-between gap-6">
+					<div class="flex-1">
+						<h3 class="text-2xl font-display font-semibold text-ms-gold">{{ plateau_repas.title ?: 'Plateau repas' }}</h3>
+						{% if plateau_repas.content %}
+							<p class="mt-3 text-ms-white/80 max-w-3xl">{{ plateau_repas.content }}</p>
+						{% elseif plateau_repas.description %}
+							<p class="mt-3 text-ms-white/80 max-w-3xl">{{ plateau_repas.description }}</p>
+						{% elseif plateau_repas is not iterable %}
+							<p class="mt-3 text-ms-white/80 max-w-3xl">{{ plateau_repas }}</p>
+						{% endif %}
+					</div>
+					<div class="flex-none">
+						{% if plateau_repas.cta_url %}
+							<a href="{{ plateau_repas.cta_url }}" class="inline-block bg-ms-gold text-black py-3 px-6 rounded-lg font-semibold border-2 border-transparent hover:bg-black hover:text-ms-gold hover:border-ms-gold transition duration-300">{{ plateau_repas.cta_label ?: __('Nous contacter', 'awstarter') }}</a>
+						{% else %}
+							<a href="/contact" class="inline-block bg-ms-gold text-black py-3 px-6 rounded-lg font-semibold border-2 border-transparent hover:bg-black hover:text-ms-gold hover:border-ms-gold transition duration-300">{{ __('Nous contacter', 'awstarter') }}</a>
+						{% endif %}
+					</div>
+				</div>
+			</section>
 		{% endif %}
 
 	</div>
