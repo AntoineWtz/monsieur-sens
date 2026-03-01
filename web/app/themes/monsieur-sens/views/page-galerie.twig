@@ -2,15 +2,15 @@
 
 {% block content %}
 
-<div class="container max-w-7xl mx-auto px-4 py-8 text-center">
+	<div class="container max-w-7xl mx-auto px-4 py-8 text-center">
 
-	<h1 class="text-4xl md:text-5xl lg:text-6xl font-display uppercase font-bold mb-6 heading-gold-gradient">{{ post.title }}</h1>
-	<p class="mt-2 text-ms-white">{{ __('Découvrez nos créations — cliquez sur une image pour l\'agrandir.', 'awstarter') }}</p>
+		<h1 class="text-4xl md:text-5xl lg:text-6xl font-display uppercase font-bold mb-6 heading-gold-gradient">{{ post.title }}</h1>
+		<p class="mt-2 text-ms-white">{{ post.meta('sous-titre_galerie') }}</p>
 
 		{% if plats and plats|length > 0 %}
-			<section class="grid gap-4 mt-6 grid-cols-1 sm:grid-cols-2" aria-live="polite">
+			<section class="grid gap-6 mt-6 grid-cols-1 sm:grid-cols-2" aria-live="polite">
 				{% for plat in plats %}
-					{% include 'partial/plat-card.twig' with {plat: plat} %}
+					{% include 'partial/plat-card.twig' with {plat: plat, index: loop.index0} %}
 				{% endfor %}
 			</section>
 		{% else %}
