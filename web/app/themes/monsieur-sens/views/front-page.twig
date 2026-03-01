@@ -8,14 +8,15 @@
 		{% set hero = post.meta('hero_accueil')|default({}) %}
 		{% set images = hero.images_hero|default([]) %}
 
-		<section class="hero-section relative">
+		<section
+			class="hero-section relative">
 			{# voile violet sombre entre les slides et le contenu #}
 			<div class="hero-veil absolute inset-0 bg-[rgba(0,0,0,0.5)] pointer-events-none z-10"></div>
 			<div class="swiper hero-swiper">
 				<div class="swiper-wrapper">
 					{% for img in images %}
 						<div class="swiper-slide">
-							<img src="{{ img.url }}" alt="{{ img.alt|default('') }}" class="w-full object-cover h-[60vh] rounded-3xl"/>
+							<img src="{{ img.url }}" alt="{{ img.alt|default('') }}" class="w-full object-cover h-[80vh] rounded-3xl"/>
 						</div>
 					{% endfor %}
 				</div>
@@ -44,16 +45,16 @@
 		{# Bloc suggestions : 4 images avec titre et bordure gold #}
 		{% set suggestions = post.meta('bloc_suggestions')|default([]) %}
 
-		<section id="suggestions" class="py-12 container">
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+		<section id="suggestions" class="container max-w-5xl mx-auto -translate-y-10 relative z-20">
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 				{% for s in suggestions %}
-					<article class="suggestion-card border-2 border-yellow-400 rounded-lg overflow-hidden bg-black">
-						{% if s.photo_suggestion %}
-							<img src="{{ s.photo_suggestion.url }}" alt="{{ s.titre_suggestion|default('') }}" class="w-full h-56 object-cover"/>
-						{% endif %}
-						<div class="p-4 text-white">
+					<article class="suggestion-card border-2 border-ms-gold rounded-tl-3xl rounded-tr-lg rounded-br-3xl rounded-bl-lg overflow-hidden bg-black">
+						<div class="px-4 py-6 text-white text-center font-display text-2xl">
 							<h3 class="font-semibold">{{ s.titre_suggestion|default('') }}</h3>
 						</div>
+						{% if s.photo_suggestion %}
+							<img src="{{ s.photo_suggestion.url }}" alt="{{ s.titre_suggestion|default('') }}" class="w-full h-72 object-cover p-2 rounded-tl-3xl rounded-tr-lg rounded-br-3xl rounded-bl-lg"/>
+						{% endif %}
 					</article>
 				{% endfor %}
 			</div>
