@@ -61,32 +61,55 @@
 		</section>
 
 
-		{# Bloc choisir : 3 cards avec texte, bouton et background image #}
+		{# Bloc choisir : rendu stylé + tolérance sur noms de champs ACF #}
 		{% set choisir = post.meta('bloc_choisir')|default({}) %}
 		{% set cards = choisir.card_choisir|default([]) %}
 
-		<section class="py-12 container">
-			<h2 class="text-2xl mb-6">{{ choisir.titre_choisir|default('Pourquoi choisir Monsieur Sens ?') }}</h2>
-			<div class="grid md:grid-cols-3 gap-6">
-				{% for c in cards %}
-					<div class="relative rounded-lg overflow-hidden min-h-[260px]">
-						{% if c.image %}
-							<img src="{{ c.image.url }}" alt="{{ c.titre|default('') }}" class="absolute inset-0 w-full h-full object-cover"/>
-							<div class="absolute inset-0 bg-black/45"></div>
-						{% else %}
-							<div class="bg-gray-900 absolute inset-0"></div>
-						{% endif %}
-						<div class="relative p-6 text-white h-full flex flex-col justify-between">
-							<div>
-								<h3 class="font-semibold text-lg">{{ c.titre|default('Titre') }}</h3>
-								<p class="mt-2 text-sm">{{ c.texte|default('Description courte') }}</p>
-							</div>
-							<div class="mt-4">
-								<a href="{{ c.bouton_url|default('#') }}" class="inline-block bg-yellow-400 text-black px-4 py-2 rounded">{{ c.bouton_text|default('Suggestions') }}</a>
-							</div>
+		<section class="py-8 md:py-12">
+			<div class="container max-w-7xl mx-auto">
+				<div class="relative rounded-tl-3xl rounded-tr-lg rounded-br-3xl rounded-bl-lg overflow-visible border-2 border-ms-gold" style="{{ (choisir.image_choisir is defined and choisir.image_choisir) ? ('background-image: url(' ~ choisir.image_choisir.url ~ '); background-size: cover; background-position: center;') : '' }}">
+					<div class="absolute inset-0 bg-black/80 rounded-tl-3xl rounded-tr-lg rounded-br-3xl rounded-bl-lg"></div>
+					<div class="relative z-10 p-8">
+						<h2 class="text-3xl text-center font-display text-white mb-16">{{ choisir.titre_choisir }}</h2>
+						<div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+							{% for c in cards %}
+								{# Résolution souple des noms de champs possibles #}
+								{% set img_url = (c.image is defined and c.image) ? c.image.url : ((c.image_choisir is defined and c.image_choisir) ? c.image_choisir.url : ((c.photo is defined and c.photo) ? c.photo.url : '')) %}
+								{% set icon_url = (c.icone_card is defined and c.icone_card) ? c.icone_card.url : ((c.icone is defined and c.icone) ? c.icone.url : ((c.icon is defined and c.icon) ? c.icon.url : '')) %}
+								{% set title = c.titre_card|default(c.titre|default(c.titre_choisir|default('Titre'))) %}
+								{% set text = c.texte_card|default(c.texte|default(c.texte_choisir|default(c.description|default('')))) %}
+								{% set btn_text = c.texte_bouton_card|default(c.texte_bouton|default(c.bouton_text|default('En savoir plus'))) %}
+								{% set btn_href = c.lien_bouton_card|default(c.lien_bouton|default(c.bouton_url|default(c.lien|default('#')))) %}
+
+								<div class="relative rounded-lg overflow-visible min-h-[280px] bg-black/90 border-2 border-ms-gold p-6 flex flex-col justify-between text-white rounded-tl-3xl rounded-tr-lg rounded-br-3xl rounded-bl-lg">
+									<div class="absolute -top-10 left-1/2 transform -translate-x-1/2 z-40">
+										<div class="w-20 h-20 rounded-full bg-black border-2 border-ms-gold flex items-center justify-center overflow-hidden">
+											{% if icon_url %}
+												<img src="{{ icon_url }}" alt="" class="w-12 h-12 object-contain"/>
+											{% else %}
+												<span class="text-ms-gold">●</span>
+											{% endif %}
+										</div>
+									</div>
+
+									<div class="pt-8 text-center z-10">
+										<h3 class="font-semibold text-xl mb-2">{{ title }}</h3>
+										<p class="text-md">{{ text }}</p>
+									</div>
+									<div class="mt-6 text-center z-10">
+										<a href="{{ btn_href }}" class="inline-block bg-transparent text-ms-gold py-2 px-4 rounded-lg font-semibold border-2 border-ms-gold hover:bg-ms-gold hover:text-black transition duration-300">{{ btn_text }}</a>
+									</div>
+
+									{% if img_url %}
+										<div class="absolute inset-0 -z-10 opacity-30">
+											<img src="{{ img_url }}" alt="{{ title }}" class="w-full h-full object-cover"/>
+										</div>
+									{% endif %}
+								</div>
+							{% endfor %}
 						</div>
 					</div>
-				{% endfor %}
+				</div>
 			</div>
 		</section>
 
