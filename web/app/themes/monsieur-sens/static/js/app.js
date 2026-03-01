@@ -7,6 +7,7 @@ import {
 
 import { GalleryInline } from "./gallery";
 import { SuggestionsRotator } from "./suggestions";
+import { HeroSwiper } from "./hero-swiper";
 
 document.addEventListener("DOMContentLoaded", () => {
   VideoModal();
@@ -15,4 +16,5 @@ document.addEventListener("DOMContentLoaded", () => {
   AnimateKpis();
   GalleryInline();
   SuggestionsRotator();
+  HeroSwiper();
 });

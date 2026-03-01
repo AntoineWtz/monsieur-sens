@@ -1,10 +1,159 @@
 {% extends "base.twig" %}
 
 {% block content %}
+	<div
+		class="container max-w-7xl mx-auto px-4">
 
-	<div class="container">
-		<h1>Bienvenue sur la page d'accueil de Monsieur Sens</h1>
-		<p>Découvrez nos produits et services de qualité.</p>
+		{# Hero : carrousel pleine largeur avec titre, sous-titre et deux boutons #}
+		{% set hero = post.meta('hero_accueil')|default({}) %}
+		{% set images = hero.images_hero|default([]) %}
+
+		<section class="hero-section relative">
+			{# voile violet sombre entre les slides et le contenu #}
+			<div class="hero-veil absolute inset-0 bg-[rgba(0,0,0,0.5)] pointer-events-none z-10"></div>
+			<div class="swiper hero-swiper">
+				<div class="swiper-wrapper">
+					{% for img in images %}
+						<div class="swiper-slide">
+							<img src="{{ img.url }}" alt="{{ img.alt|default('') }}" class="w-full object-cover h-[60vh] rounded-3xl"/>
+						</div>
+					{% endfor %}
+				</div>
+				<div class="swiper-pagination"></div>
+			</div>
+
+			<div class="hero-overlay absolute inset-0 flex items-center justify-center z-20">
+				<div class="text-center text-white max-w-2xl px-4">
+					<h1 class="text-6xl font-display mb-4">{{ hero.titre_hero|default('Titre principal') }}</h1>
+					<p class="mb-6 text-2xl">{{ hero.sous_titre_hero|default('Sous-titre descriptif') }}</p>
+					<div class="space-x-4">
+						{% set btn_inverse = 'inline-block bg-black text-ms-white py-2 px-6 rounded-lg font-semibold border-2 border-ms-gold hover:bg-ms-gold hover:text-black transition duration-300' %}
+						{% set btn_contact = 'inline-block bg-ms-gold text-black py-2 px-6 rounded-lg font-semibold border-2 border-transparent hover:bg-black hover:text-ms-white hover:border-ms-gold transition duration-300' %}
+						{% for btn in hero.boutons_hero|default([]) %}
+							{% set label = btn.texte_bouton|default(btn.bouton_text|default(btn.texte|default(btn.titre|default('')))) %}
+							{% set href = btn.lien_bouton|default(btn.bouton_url|default(btn.lien|default('#'))) %}
+							{% set btn_classes = (loop.index == 1) ? btn_inverse : btn_contact %}
+							<a href="{{ href }}" class="{{ btn_classes }}" aria-label="{{ label }}">{{ label }}</a>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</section>
+
+
+		{# Bloc suggestions : 4 images avec titre et bordure gold #}
+		{% set suggestions = post.meta('bloc_suggestions')|default([]) %}
+
+		<section id="suggestions" class="py-12 container">
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+				{% for s in suggestions %}
+					<article class="suggestion-card border-2 border-yellow-400 rounded-lg overflow-hidden bg-black">
+						{% if s.photo_suggestion %}
+							<img src="{{ s.photo_suggestion.url }}" alt="{{ s.titre_suggestion|default('') }}" class="w-full h-56 object-cover"/>
+						{% endif %}
+						<div class="p-4 text-white">
+							<h3 class="font-semibold">{{ s.titre_suggestion|default('') }}</h3>
+						</div>
+					</article>
+				{% endfor %}
+			</div>
+		</section>
+
+
+		{# Bloc choisir : 3 cards avec texte, bouton et background image #}
+		{% set choisir = post.meta('bloc_choisir')|default({}) %}
+		{% set cards = choisir.card_choisir|default([]) %}
+
+		<section class="py-12 container">
+			<h2 class="text-2xl mb-6">{{ choisir.titre_choisir|default('Pourquoi choisir Monsieur Sens ?') }}</h2>
+			<div class="grid md:grid-cols-3 gap-6">
+				{% for c in cards %}
+					<div class="relative rounded-lg overflow-hidden min-h-[260px]">
+						{% if c.image %}
+							<img src="{{ c.image.url }}" alt="{{ c.titre|default('') }}" class="absolute inset-0 w-full h-full object-cover"/>
+							<div class="absolute inset-0 bg-black/45"></div>
+						{% else %}
+							<div class="bg-gray-900 absolute inset-0"></div>
+						{% endif %}
+						<div class="relative p-6 text-white h-full flex flex-col justify-between">
+							<div>
+								<h3 class="font-semibold text-lg">{{ c.titre|default('Titre') }}</h3>
+								<p class="mt-2 text-sm">{{ c.texte|default('Description courte') }}</p>
+							</div>
+							<div class="mt-4">
+								<a href="{{ c.bouton_url|default('#') }}" class="inline-block bg-yellow-400 text-black px-4 py-2 rounded">{{ c.bouton_text|default('Suggestions') }}</a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</section>
+
+
+		{# Bloc histoire : colonne gauche texte, image à droite #}
+		{% set histoire = post.meta('bloc_histoire')|default({}) %}
+
+		<section class="py-12 container grid md:grid-cols-2 gap-8 items-center">
+			<div>
+				<h2 class="text-2xl mb-4">{{ histoire.titre_histoire|default('Notre histoire') }}</h2>
+				<p class="mb-6">{{ histoire.texte_histoire|default('En août 2025, Monsieur Sens voit le jour...') }}</p>
+				<a href="{{ histoire.bouton_url|default('#') }}" class="bg-yellow-400 text-black px-4 py-2 rounded">{{ histoire.bouton_text|default('En savoir plus') }}</a>
+			</div>
+			<div>
+				{% if histoire.image_histoire %}
+					<img src="{{ histoire.image_histoire.url }}" alt="{{ histoire.titre_histoire|default('') }}" class="w-full rounded-lg object-cover"/>
+				{% endif %}
+			</div>
+		</section>
+
+
+		{# Bloc engagements : image à gauche, contenu et 3 cards à droite #}
+		{% set eng = post.meta('bloc_engagements')|default({}) %}
+		{% set eng_cards = eng.card_engagements|default([]) %}
+
+		<section class="py-12 container grid md:grid-cols-2 gap-8 items-start">
+			<div>
+				{% if eng.image %}
+					<img src="{{ eng.image.url }}" alt="{{ eng.titre|default('') }}" class="w-full rounded-lg object-cover"/>
+				{% endif %}
+			</div>
+			<div>
+				<h2 class="text-2xl mb-4">{{ eng.titre|default('Nos engagements') }}</h2>
+				<p class="mb-6">{{ eng.texte|default('Parce que la cuisine rassemble...') }}</p>
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+					{% for card in eng_cards %}
+						<div class="border border-yellow-400 rounded-lg p-4 text-center bg-black/50">
+							{% if card.icone %}
+								<img src="{{ card.icone.url }}" alt="" class="mx-auto h-10 mb-2"/>
+							{% endif %}
+							<div class="font-semibold">{{ card.titre|default('') }}</div>
+							<div class="text-sm">{{ card.texte|default('') }}</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</section>
+
+
+		{# Bloc contact : titre, paragraphe, bouton #}
+		{% set contact = post.meta('bloc_contact')|default({}) %}
+
+		<section id="contact" class="py-12 container text-center">
+			<h2 class="text-2xl mb-4">{{ contact.titre|default('Parlons de votre évènement') }}</h2>
+			<p class="mb-6 max-w-2xl mx-auto">{{ contact.texte|default('Prêts à offrir à vos invités une expérience gastronomique hors du commun ?') }}</p>
+			<a href="{{ contact.bouton_url|default('/contact') }}" class="bg-yellow-400 text-black px-6 py-3 rounded inline-block">{{ contact.bouton_text|default('Contactez-nous') }}</a>
+		</section>
+
+
+		{# Bloc galerie : 7 images en disposition masonry #}
+		{% set gallery = post.meta('bloc_galerie')|default([]) %}
+
+		<section class="py-12 container">
+			<div class="columns-3 gap-4 space-y-4">
+				{% for img in gallery %}
+					<img src="{{ img.url }}" alt="{{ img.alt|default('') }}" class="w-full mb-4 break-inside rounded-lg object-cover"/>
+				{% endfor %}
+			</div>
+		</section>
 	</div>
-
 {% endblock %}
