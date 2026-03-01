@@ -5,7 +5,7 @@
 		class="container max-w-7xl mx-auto px-4">
 
 		{# Hero : carrousel pleine largeur avec titre, sous-titre et deux boutons #}
-		{% set hero = post.meta('hero_accueil')|default({}) %}
+		{% set hero = hero_accueil|default({}) %}
 		{% set images = hero.images_hero|default([]) %}
 
 		<section
@@ -43,7 +43,7 @@
 
 
 		{# Bloc suggestions : 4 images avec titre et bordure gold #}
-		{% set suggestions = suggestions|default(post.meta('bloc_suggestions')|default([])) %}
+		{% set suggestions = suggestions|default([]) %}
 
 		<section id="suggestions" class="container max-w-5xl mx-auto -translate-y-10 relative z-20">
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -67,7 +67,7 @@
 
 
 		{# Bloc choisir : rendu stylé + tolérance sur noms de champs ACF #}
-		{% set choisir = post.meta('bloc_choisir')|default({}) %}
+		{% set choisir = bloc_choisir|default({}) %}
 		{% set cards = choisir.card_choisir|default([]) %}
 
 		<section class="py-8 md:py-12">
@@ -120,43 +120,48 @@
 
 
 		{# Bloc histoire : colonne gauche texte, image à droite #}
-		{% set histoire = post.meta('bloc_histoire')|default({}) %}
+		{% set histoire = bloc_histoire|default({}) %}
 
 		<section class="py-12 container grid md:grid-cols-2 gap-8 items-center">
-			<div>
-				<h2 class="text-2xl mb-4">{{ histoire.titre_histoire|default('Notre histoire') }}</h2>
-				<p class="mb-6">{{ histoire.texte_histoire|default('En août 2025, Monsieur Sens voit le jour...') }}</p>
-				<a href="{{ histoire.bouton_url|default('#') }}" class="bg-yellow-400 text-black px-4 py-2 rounded">{{ histoire.bouton_text|default('En savoir plus') }}</a>
+			<div class="order-2 md:order-1 flex flex-col justify-center">
+				<h2 class="text-3xl font-display text-white mb-6">{{ histoire.titre_histoire }}</h2>
+				<p class="mb-6 text-lg text-gray-300">{{ histoire.paragraphe_histoire }}</p>
+				{% if histoire.texte_bouton_histoire or histoire.lien_bouton_histoire %}
+					<a href="{{ histoire.lien_bouton_histoire }}" class="inline-block bg-ms-gold text-black py-3 px-6 rounded-full font-semibold shadow-sm">{{ histoire.texte_bouton_histoire }}</a>
+				{% endif %}
 			</div>
-			<div>
+			<div class="order-1 md:order-2">
 				{% if histoire.image_histoire %}
-					<img src="{{ histoire.image_histoire.url }}" alt="{{ histoire.titre_histoire|default('') }}" class="w-full rounded-lg object-cover"/>
+					<img src="{{ histoire.image_histoire.url }}" alt="{{ histoire.titre_histoire }}" class="w-full rounded-3xl object-cover shadow-lg"/>
 				{% endif %}
 			</div>
 		</section>
 
 
 		{# Bloc engagements : image à gauche, contenu et 3 cards à droite #}
-		{% set eng = post.meta('bloc_engagements')|default({}) %}
-		{% set eng_cards = eng.card_engagements|default([]) %}
+		{% set eng = bloc_engagements|default({}) %}
+		{% set eng_cards = eng.card_engagement|default([]) %}
 
 		<section class="py-12 container grid md:grid-cols-2 gap-8 items-start">
 			<div>
-				{% if eng.image %}
-					<img src="{{ eng.image.url }}" alt="{{ eng.titre|default('') }}" class="w-full rounded-lg object-cover"/>
+				{% if eng.image_engagement %}
+					<img src="{{ eng.image_engagement.url }}" alt="{{ eng.titre_engagement }}" class="w-full rounded-3xl object-cover shadow-lg"/>
 				{% endif %}
 			</div>
-			<div>
-				<h2 class="text-2xl mb-4">{{ eng.titre|default('Nos engagements') }}</h2>
-				<p class="mb-6">{{ eng.texte|default('Parce que la cuisine rassemble...') }}</p>
-				<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+			<div class="flex flex-col justify-center">
+				<h2 class="text-3xl font-display text-white mb-4">{{ eng.titre_engagement }}</h2>
+				<p class="mb-8 text-gray-300">{{ eng.texte_engagement }}</p>
+				<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
 					{% for card in eng_cards %}
-						<div class="border border-yellow-400 rounded-lg p-4 text-center bg-black/50">
-							{% if card.icone %}
-								<img src="{{ card.icone.url }}" alt="" class="mx-auto h-10 mb-2"/>
-							{% endif %}
-							<div class="font-semibold">{{ card.titre|default('') }}</div>
-							<div class="text-sm">{{ card.texte|default('') }}</div>
+						<div class="flex flex-col items-center p-6 border-2 border-ms-gold rounded-2xl bg-black/60 text-white">
+							<div class="w-16 h-16 flex items-center justify-center mb-4">
+								{% if card.icone_engagement %}
+									<img src="{{ card.icone_engagement.url }}" alt="{{ card.texte_card_engagement }}" class="h-12 w-auto"/>
+								{% else %}
+									<span class="text-ms-gold text-3xl">•</span>
+								{% endif %}
+							</div>
+							<div class="text-sm text-gray-300">{{ card.texte_card_engagement }}</div>
 						</div>
 					{% endfor %}
 				</div>
@@ -165,7 +170,7 @@
 
 
 		{# Bloc contact : titre, paragraphe, bouton #}
-		{% set contact = post.meta('bloc_contact')|default({}) %}
+		{% set contact = bloc_contact|default({}) %}
 
 		<section id="contact" class="py-12 container text-center">
 			<h2 class="text-2xl mb-4">{{ contact.titre|default('Parlons de votre évènement') }}</h2>
@@ -175,7 +180,7 @@
 
 
 		{# Bloc galerie : 7 images en disposition masonry #}
-		{% set gallery = post.meta('bloc_galerie')|default([]) %}
+		{% set gallery = bloc_galerie|default([]) %}
 
 		<section class="py-12 container">
 			<div class="columns-3 gap-4 space-y-4">
