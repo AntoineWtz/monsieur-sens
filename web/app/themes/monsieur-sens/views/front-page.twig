@@ -43,19 +43,24 @@
 
 
 		{# Bloc suggestions : 4 images avec titre et bordure gold #}
-		{% set suggestions = post.meta('bloc_suggestions')|default([]) %}
+		{% set suggestions = suggestions|default(post.meta('bloc_suggestions')|default([])) %}
 
 		<section id="suggestions" class="container max-w-5xl mx-auto -translate-y-10 relative z-20">
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 				{% for s in suggestions %}
-					<article class="suggestion-card border-2 border-ms-gold rounded-tl-3xl rounded-tr-lg rounded-br-3xl rounded-bl-lg overflow-hidden bg-black">
-						<div class="px-4 py-6 text-white text-center font-display text-2xl">
-							<h3 class="font-semibold">{{ s.titre_suggestion|default('') }}</h3>
-						</div>
-						{% if s.photo_suggestion %}
-							<img src="{{ s.photo_suggestion.url }}" alt="{{ s.titre_suggestion|default('') }}" class="w-full h-72 object-cover p-2 rounded-tl-3xl rounded-tr-lg rounded-br-3xl rounded-bl-lg"/>
-						{% endif %}
-					</article>
+					{# compute anchor from slug, fall back to groupless link #}
+					{% set anchor = s.slug ? ('#' ~ s.slug) : '' %}
+					{% set href = suggestions_page_url ~ anchor %}
+					<a href="{{ href }}" aria-label="{{ s.titre_suggestion|default('Suggestion') }}" class="block h-full">
+						<article class="suggestion-card h-full flex flex-col justify-between border-2 border-ms-gold rounded-tl-3xl rounded-tr-lg rounded-br-3xl rounded-bl-lg overflow-hidden bg-black">
+							<div class="flex-grow flex items-center justify-center px-4 py-6 text-white text-center font-display text-2xl">
+								<h3 class="font-semibold m-0">{{ s.titre_suggestion|default('') }}</h3>
+							</div>
+							{% if s.photo_suggestion %}
+								<img src="{{ s.photo_suggestion.url }}" alt="{{ s.titre_suggestion|default('') }}" class="w-full h-72 object-cover p-2 rounded-tl-3xl rounded-tr-lg rounded-br-3xl rounded-bl-lg"/>
+							{% endif %}
+						</article>
+					</a>
 				{% endfor %}
 			</div>
 		</section>

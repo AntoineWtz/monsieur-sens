@@ -27,6 +27,39 @@ html {
   color: transparent;
 }
 
+/* ensure suggestion cards equal height */
+.suggestion-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center; /* Center content horizontally */
+  text-align: center; /* Center text within the card */
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.suggestion-card:hover {
+  transform: translateY(-1.5rem); /* -translate-y-6 */
+  /* shadow top gris foncé / noir */
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.3), 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-card h3 {
+  flex-grow: 1; /* Allow the title to take up available space */
+  display: flex;
+  align-items: center; /* Center text vertically */
+  justify-content: center; /* Center text horizontally */
+  margin: 0; /* Remove default margin */
+}
+
+.suggestion-card img {
+  flex-shrink: 0;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  width: 100%;
+}
+
 /* Gallery: expanded plat card state */
 .plat-card.expanded img {
   width: 100% !important;

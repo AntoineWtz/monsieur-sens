@@ -60,8 +60,9 @@ $context['suggestion_groups'][] = [
 	'title_left' => false,
 ];
 
-// Alternate title_left across sections (true = title left)
+// Alternate title_left across sections (true = title left) and add slug used for anchors
 foreach ($context['suggestion_groups'] as $i => &$g) {
+	$g['slug'] = sanitize_title($g['title']);
 	$g['title_left'] = ($i % 2) === 0;
 }
 

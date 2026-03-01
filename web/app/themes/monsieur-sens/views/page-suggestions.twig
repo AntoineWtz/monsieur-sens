@@ -15,7 +15,7 @@
 		</header>
 
 		{% for group in suggestion_groups %}
-			<section class="my-16 rounded-2xl p-6 bg-black/5 ring-1 ring-ms-gold/10">
+			<section id="{{ group.slug }}" class="my-16 rounded-2xl p-6 bg-black/5 ring-1 ring-ms-gold/10">
 				{% set posts = group.posts ?: [] %}
 				{% set preview = posts|slice(0,4) %}
 				{% set rest = posts|slice(4) %}
